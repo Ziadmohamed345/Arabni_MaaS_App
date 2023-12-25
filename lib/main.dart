@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 void main() {
   runApp(const MyApp());
 }
@@ -22,7 +21,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -31,85 +29,102 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
- 
- late final TextEditingController _email;
- late final TextEditingController _password;
- late final TextEditingController _firstname;
- late final TextEditingController _lastname;
- late final TextEditingController _number;
- late final TextEditingController _id;
+  late final TextEditingController _email;
+  late final TextEditingController _password;
+  late final TextEditingController _firstname;
+  late final TextEditingController _lastname;
+  late final TextEditingController _number;
 
+  @override
+  void initState() {
+    _email = TextEditingController();
+    _password = TextEditingController();
+    _firstname = TextEditingController();
+    _lastname = TextEditingController();
+    _number = TextEditingController();
+    super.initState();
+  }
 
- @override
- void initState() {
-  _email = TextEditingController();
-  _password= TextEditingController();
-  _firstname= TextEditingController();
-  _lastname= TextEditingController();
-  _number= TextEditingController();
-  _id= TextEditingController();
-   super.initState();
- }
-
- @override
- void dispose(){
-  _email.dispose();
-  _password.dispose();
-  _firstname.dispose();
-  _lastname.dispose();
-  _number.dispose();
-  _id.dispose();
-  super.dispose();
- }
+  @override
+  void dispose() {
+    _email.dispose();
+    _password.dispose();
+    _firstname.dispose();
+    _lastname.dispose();
+    _number.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Register'),
+      appBar: AppBar(
+        title: const Text('Register'),
+        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 30),
+        backgroundColor: const Color(0xFF153158), // Use const for static text
       ),
-      body: Column(
-        children: [
-          TextField(
-            controller: _email ,
-            decoration: const InputDecoration(
-              hintText: 'enter your email here',
-            ),
+      body: Container(
+        color: const Color(0xFF153158),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextField(
+                controller: _firstname,
+                decoration: const InputDecoration(
+                    labelText: 'First Name',
+                    labelStyle: TextStyle(
+                        color: Colors.white, fontSize: 20), // Set title color
+                    icon: Icon(Icons.person),
+                    iconColor: Colors.white),
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 16.0),
+              TextField(
+                controller: _lastname,
+                decoration: const InputDecoration(
+                    labelText: 'Last Name',
+                    labelStyle: TextStyle(
+                        color: Colors.white, fontSize: 20), // Set title color
+                    icon: Icon(Icons.person),
+                    iconColor: Colors.white),
+              ),
+              TextField(
+                controller: _email,
+                decoration: const InputDecoration(
+                    labelText: 'Email',
+                    labelStyle: TextStyle(
+                        color: Colors.white, fontSize: 20), // Set title color
+                    icon: Icon(Icons.email),
+                    iconColor: Colors.white),
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 16.0),
+              TextField(
+                controller: _password,
+                decoration: const InputDecoration(
+                    labelText: 'Password',
+                    labelStyle: TextStyle(
+                        color: Colors.white, fontSize: 20), // Set title color
+                    icon: Icon(Icons.lock),
+                    iconColor: Colors.white),
+                obscureText: true,
+              ),
+              const SizedBox(height: 16.0),
+              TextField(
+                controller: _number,
+                decoration: const InputDecoration(
+                    labelText: 'Phone Number',
+                    labelStyle: TextStyle(
+                        color: Colors.white, fontSize: 20), // Set title color
+                    icon: Icon(Icons.phone),
+                    iconColor: Colors.white),
+                keyboardType: TextInputType.phone,
+              ),
+            ],
           ),
-          TextField(
-            controller: _password,
-            decoration: const InputDecoration(
-              hintText: 'enter your password here',
-            ),
-          ),
-                    TextField(
-            controller: _firstname,
-            decoration: const InputDecoration(
-              hintText: 'enter your first name here',
-            ),
-          ),          TextField(
-            controller: _lastname,
-            decoration: const InputDecoration(
-              hintText: 'enter your last name here',
-            ),
-          ),          TextField(
-            controller: _number,
-            decoration: const InputDecoration(
-              hintText: 'enter your number here',
-            ),
-          ),
-            TextField(
-            controller: _id,
-            decoration: const InputDecoration(
-              hintText: 'enter your id here',
-            ),
-          ),
-          TextButton(
-            onPressed: () async {
-
-            },
-            child: const Text('Register'),
-          ),
-        ],
+        ),
       ),
     );
   }
