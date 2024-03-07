@@ -1,6 +1,10 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'firebase_options.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -12,7 +16,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 198, 192, 208)),
         useMaterial3: true,
       ),
       home: const HomePage(),
@@ -91,24 +96,28 @@ class _HomePageState extends State<HomePage> {
               ),
               TextField(
                 controller: _email,
+                enableSuggestions: false,
+                autocorrect: false,
+                keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
                     labelText: 'Email',
                     labelStyle: TextStyle(
                         color: Colors.white, fontSize: 20), // Set title color
                     icon: Icon(Icons.email),
                     iconColor: Colors.white),
-                keyboardType: TextInputType.emailAddress,
               ),
               const SizedBox(height: 16.0),
               TextField(
                 controller: _password,
+                obscureText: true,
+                enableSuggestions: false,
+                autocorrect: false,
                 decoration: const InputDecoration(
                     labelText: 'Password',
                     labelStyle: TextStyle(
                         color: Colors.white, fontSize: 20), // Set title color
                     icon: Icon(Icons.lock),
                     iconColor: Colors.white),
-                obscureText: true,
               ),
               const SizedBox(height: 16.0),
               TextField(
@@ -121,6 +130,19 @@ class _HomePageState extends State<HomePage> {
                     iconColor: Colors.white),
                 keyboardType: TextInputType.phone,
               ),
+              TextButton(
+                  onPressed: () async {
+                    await Firebase.initializeApp(
+                      options: DefaultFirebaseOptions.currentPlatform,
+                    );
+                    final email = _email.text;
+                    final password = _password.text;
+                    final userCredential = await FirebaseAuth.instance
+                        .createUserWithEmailAndPassword(
+                            email: email, password: password);
+                    print(userCredential);
+                  },
+                  child: const Text("Register")),
             ],
           ),
         ),

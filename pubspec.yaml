@@ -31,6 +31,8 @@ dependencies:
   flutter:
     sdk: flutter
   firebase_core: ^2.7.0  # Use the latest version available
+  firebase_auth: ^4.3.0 # Use the latest version
+
 
 
 
