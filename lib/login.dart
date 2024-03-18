@@ -1,52 +1,26 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:maasapp/login.dart';
 import 'firebase_options.dart';
 
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
-}
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class Login extends StatefulWidget {
+  const Login({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 198, 192, 208)),
-        useMaterial3: true,
-      ),
-      home: const Login(),
-    );
-  }
+  State<Login> createState() => _LoginState();
 }
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  late final TextEditingController _email;
+class _LoginState extends State<Login> {
+late final TextEditingController _email;
   late final TextEditingController _password;
-  late final TextEditingController _firstname;
-  late final TextEditingController _lastname;
-  late final TextEditingController _number;
+
 
   @override
   void initState() {
     _email = TextEditingController();
     _password = TextEditingController();
-    _firstname = TextEditingController();
-    _lastname = TextEditingController();
-    _number = TextEditingController();
+
     super.initState();
   }
 
@@ -54,9 +28,7 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     _email.dispose();
     _password.dispose();
-    _firstname.dispose();
-    _lastname.dispose();
-    _number.dispose();
+
     super.dispose();
   }
 
@@ -64,7 +36,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Register'),
+        title: const Text('Login'),
         titleTextStyle: const TextStyle(color: Colors.white, fontSize: 30),
         backgroundColor: const Color(0xFF153158), // Use const for static text
       ),
@@ -75,26 +47,7 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TextField(
-                controller: _firstname,
-                decoration: const InputDecoration(
-                    labelText: 'First Name',
-                    labelStyle: TextStyle(
-                        color: Colors.white, fontSize: 20), // Set title color
-                    icon: Icon(Icons.person),
-                    iconColor: Colors.white),
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const SizedBox(height: 16.0),
-              TextField(
-                controller: _lastname,
-                decoration: const InputDecoration(
-                    labelText: 'Last Name',
-                    labelStyle: TextStyle(
-                        color: Colors.white, fontSize: 20), // Set title color
-                    icon: Icon(Icons.person),
-                    iconColor: Colors.white),
-              ),
+             
               TextField(
                 controller: _email,
                 enableSuggestions: false,
@@ -121,16 +74,7 @@ class _HomePageState extends State<HomePage> {
                     iconColor: Colors.white),
               ),
               const SizedBox(height: 16.0),
-              TextField(
-                controller: _number,
-                decoration: const InputDecoration(
-                    labelText: 'Phone Number',
-                    labelStyle: TextStyle(
-                        color: Colors.white, fontSize: 20), // Set title color
-                    icon: Icon(Icons.phone),
-                    iconColor: Colors.white),
-                keyboardType: TextInputType.phone,
-              ),
+             
               TextButton(
                   onPressed: () async {
                     await Firebase.initializeApp(
@@ -139,15 +83,22 @@ class _HomePageState extends State<HomePage> {
                     final email = _email.text;
                     final password = _password.text;
                     final userCredential = await FirebaseAuth.instance
-                        .createUserWithEmailAndPassword(
+                        .signInWithEmailAndPassword(
                             email: email, password: password);
+                        
                     print(userCredential);
-                  },
-                  child: const Text("Register")),
+                  }, //catch (e) {
+                     //print('error');
+                  //}
+                  child: const Text("Login")),
             ],
           ),
         ),
       ),
     );
   }
-}
+
+
+ 
+  }
+
