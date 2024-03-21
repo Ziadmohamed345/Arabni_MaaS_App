@@ -4,23 +4,27 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
 
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _LoginState extends State<Login> {
-late final TextEditingController _email;
-late final TextEditingController _password;
-
+class _HomePageState extends State<HomePage> {
+  late final TextEditingController _email;
+  late final TextEditingController _password;
+  late final TextEditingController _firstname;
+  late final TextEditingController _lastname;
+  late final TextEditingController _number;
 
   @override
   void initState() {
     _email = TextEditingController();
     _password = TextEditingController();
-
+    _firstname = TextEditingController();
+    _lastname = TextEditingController();
+    _number = TextEditingController();
     super.initState();
   }
 
@@ -28,7 +32,9 @@ late final TextEditingController _password;
   void dispose() {
     _email.dispose();
     _password.dispose();
-
+    _firstname.dispose();
+    _lastname.dispose();
+    _number.dispose();
     super.dispose();
   }
 
@@ -36,7 +42,7 @@ late final TextEditingController _password;
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title: const Text('Register'),
         titleTextStyle: const TextStyle(color: Colors.white, fontSize: 30),
         backgroundColor: const Color(0xFF153158), // Use const for static text
       ),
@@ -47,7 +53,26 @@ late final TextEditingController _password;
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-             
+              TextField(
+                controller: _firstname,
+                decoration: const InputDecoration(
+                    labelText: 'First Name',
+                    labelStyle: TextStyle(
+                        color: Colors.white, fontSize: 20), // Set title color
+                    icon: Icon(Icons.person),
+                    iconColor: Colors.white),
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 16.0),
+              TextField(
+                controller: _lastname,
+                decoration: const InputDecoration(
+                    labelText: 'Last Name',
+                    labelStyle: TextStyle(
+                        color: Colors.white, fontSize: 20), // Set title color
+                    icon: Icon(Icons.person),
+                    iconColor: Colors.white),
+              ),
               TextField(
                 controller: _email,
                 enableSuggestions: false,
@@ -74,7 +99,16 @@ late final TextEditingController _password;
                     iconColor: Colors.white),
               ),
               const SizedBox(height: 16.0),
-             
+              TextField(
+                controller: _number,
+                decoration: const InputDecoration(
+                    labelText: 'Phone Number',
+                    labelStyle: TextStyle(
+                        color: Colors.white, fontSize: 20), // Set title color
+                    icon: Icon(Icons.phone),
+                    iconColor: Colors.white),
+                keyboardType: TextInputType.phone,
+              ),
               TextButton(
                   onPressed: () async {
                     await Firebase.initializeApp(
@@ -83,30 +117,21 @@ late final TextEditingController _password;
                     final email = _email.text;
                     final password = _password.text;
                     final userCredential = await FirebaseAuth.instance
-                        .signInWithEmailAndPassword(
+                        .createUserWithEmailAndPassword(
                             email: email, password: password);
-                        
                     print(userCredential);
-                  }, //catch (e) {
-                     //print('error');
-                  //}
-                  child: const Text("Login")
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pushNamedAndRemoveUntil('/register/', (route) => false);
-                    },
-                    child: const Text('Register From Here'),
-                  )
+                      
+                  },
+                  child: const Text("Register")),
+                  TextButton(onPressed: () {
+                    Navigator.of(context).pushNamedAndRemoveUntil('/login/', (route) => false);
 
+                  }, child: const Text('Already Registered? Login Here!'),
+                  )
             ],
           ),
         ),
       ),
     );
   }
-
-
- 
-  }
-
+}
