@@ -122,11 +122,13 @@ class _HomePageState extends State<HomePage> {
                     print(userCredential);
                       
                   },
-                  child: const Text("Register")),
-                  TextButton(onPressed: () {
+                  child: const Text("Register")
+                  ),
+                  TextButton(
+                    onPressed: () {
                     Navigator.of(context).pushNamedAndRemoveUntil('/login/', (route) => false);
 
-                  }, child: const Text('Already Registered? Login Here!'),
+                  }, child: const Text('Already Registered? Login Here!')
                   )
             ],
           ),

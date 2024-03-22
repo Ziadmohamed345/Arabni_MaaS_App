@@ -77,19 +77,24 @@ late final TextEditingController _password;
              
               TextButton(
                   onPressed: () async {
-                    await Firebase.initializeApp(
-                      options: DefaultFirebaseOptions.currentPlatform,
-                    );
+                   //Navigator.of(context).pushNamedAndRemoveUntil('/screen/', (route) => false);
                     final email = _email.text;
                     final password = _password.text;
-                    final userCredential = await FirebaseAuth.instance
-                        .signInWithEmailAndPassword(
-                            email: email, password: password);
-                        
-                    print(userCredential);
-                  }, //catch (e) {
-                     //print('error');
-                  //}
+                    try{
+                      final userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+                      print(userCredential);
+
+                    } on FirebaseAuthException catch (e) {
+                      if(e.code == 'user-not-found') {
+                        print('user not found');
+                      } else{
+                        print('Something Happened');
+                        print(e.code);
+                      }
+
+                    }
+                    
+                  }, 
                   child: const Text("Login")
                   ),
                   TextButton(
