@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:maasapp/firebase_options.dart';
 import 'package:maasapp/login.dart';
 import 'package:maasapp/page.dart';
 import 'package:maasapp/register.dart';
+import 'package:maasapp/verifyemail.dart';
 
 
 void main() {
@@ -38,12 +40,40 @@ class HOME extends StatelessWidget {
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
-              return const Login();
+              //final user = (FirebaseAuth.instance.currentUser);
+              //if (user != null) {
+                //if (user.emailVerified) {
+                 //return const Notes();
+                //} else {
+                  //return const Verify();
+                //}
+              //} else {
+                //return const Login();
+              //} 
+              return const Login();  
           default:
             return const  CircularProgressIndicator();
           }
         },
-          );    
+      );    
+  }
+}
+
+class Notes extends StatefulWidget {
+  const Notes({super.key});
+
+  @override
+  State<Notes> createState() => _NotesState();
+}
+
+class _NotesState extends State<Notes> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('APP UI'),
+      ),
+    );
   }
 }
 
