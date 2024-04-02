@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 //import 'firebase_options.dart';
 
-
 class Login extends StatefulWidget {
   const Login({super.key});
 
@@ -12,9 +11,8 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-late final TextEditingController _email;
-late final TextEditingController _password;
-
+  late final TextEditingController _email;
+  late final TextEditingController _password;
 
   @override
   void initState() {
@@ -47,7 +45,6 @@ late final TextEditingController _password;
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-             
               TextField(
                 controller: _email,
                 enableSuggestions: false,
@@ -74,45 +71,38 @@ late final TextEditingController _password;
                     iconColor: Colors.white),
               ),
               const SizedBox(height: 16.0),
-             
               TextButton(
                   onPressed: () async {
                     final email = _email.text;
                     final password = _password.text;
-                    try{
-                      final userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+                    try {
+                      final userCredential = await FirebaseAuth.instance
+                          .signInWithEmailAndPassword(
+                              email: email, password: password);
                       print(userCredential);
-
                     } on FirebaseAuthException catch (e) {
-                      if(e.code == 'user-not-found') {
+                      if (e.code == 'user-not-found') {
                         print('user not found');
                       } else if (e.code == 'wrong password') {
                         print('Wrong Password');
                       }
 
-                    Navigator.of(context).pushNamedAndRemoveUntil('/screen/', (route) => false);
-
-
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          '/screen/', (route) => false);
                     }
-                    
-                  }, 
-                  child: const Text("Login")
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pushNamedAndRemoveUntil('/register/', (route) => false);
-                    },
-                    child: const Text('Register From Here'),
-                  )
-
+                  },
+                  child: const Text("Login")),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil('/register/', (route) => false);
+                },
+                child: const Text('Register From Here'),
+              )
             ],
           ),
         ),
       ),
     );
   }
-
-
- 
-  }
-
+}
