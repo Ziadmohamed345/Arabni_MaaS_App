@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:maasapp/screens/core/utils/string_constants.dart';
-import 'package:maasapp/screens/features/Register/views/screen/register.dart';
+import 'package:maasapp/core/utils/string_constants.dart';
+import 'package:maasapp/features/Register/views/screen/register.dart';
+
 
 void main() async {
   Future.wait([ScreenUtil.ensureScreenSize()]).then((value) {
