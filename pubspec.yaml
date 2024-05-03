@@ -30,7 +30,7 @@ environment:
 dependencies:
   google_fonts: ^6.2.0
   flutter_screenutil: ^5.9.0
-  uber_rides: ^0.7.4
+  
   flutter:
     sdk: flutter
   firebase_core: ^2.7.0  # Use the latest version available
