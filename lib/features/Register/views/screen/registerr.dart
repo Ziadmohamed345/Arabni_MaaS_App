@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:maasapp/core/widgets/reusable_widgets/reusable.dart';
 import 'package:maasapp/core/utils/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:maasapp/features/Register/views/screen/page.dart';
+import 'package:maasapp/features/Register/views/screen/Home.dart';
 //import 'firebase_options.dart';
 
 class Login extends StatefulWidget {
@@ -49,21 +49,21 @@ class _LoginState extends State<Login> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Color(0xFF153158),
+        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 30),
         elevation: 0,
         title: const Text(
-          "Sign Up",
+          "R E G I S T E R",
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
       ),
       body: Container(
+          color: const Color(0xFF153158),
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           decoration: BoxDecoration(
               gradient: LinearGradient(colors: [
-            hexStringToColor("CB2B93"),
-            hexStringToColor("9546C4"),
-            hexStringToColor("5E61F4")
+            hexStringToColor("0xFF153158"),
           ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
           child: SingleChildScrollView(
               child: Padding(
@@ -99,7 +99,7 @@ class _LoginState extends State<Login> {
                   height: 20,
                 ),
                 
-                firebaseUIButton(context, "Sign Up", () {
+                firebaseUIButton(context, "Register", () {
                   FirebaseAuth.instance
                       .createUserWithEmailAndPassword(
                           email: _email.text,

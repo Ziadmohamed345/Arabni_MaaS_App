@@ -5,7 +5,7 @@ import 'package:maasapp/core/utils/colors.dart';
 import 'package:maasapp/core/widgets/reusable_widgets/reusable.dart';
 import 'package:maasapp/features/Register/views/screen/forgetPass.dart';
 import 'package:maasapp/features/Register/views/screen/registerr.dart';
-import 'package:maasapp/features/Register/views/screen/page.dart';
+import 'package:maasapp/features/Register/views/screen/Home.dart';
 
 
 class RegisterScreen extends StatefulWidget {
@@ -21,7 +21,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(0xFF153158),
+        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 30),
+        title: const Text("L O G I N"),
+      ),
+    
       body: Container(
+        color: const Color(0xFF153158),
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(gradient: LinearGradient(colors: [hexStringToColor("0xFF153158")], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
@@ -43,7 +50,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   height: 5,
                 ),
                 forgetPassword(context),
-                firebaseUIButton(context, "Sign In", () async {
+                firebaseUIButton(context, "login In", () async {
                  await FirebaseAuth.instance
                       .signInWithEmailAndPassword(
                           email: _email.text,
