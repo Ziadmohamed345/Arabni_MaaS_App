@@ -1,107 +1,106 @@
-//import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-//import 'firebase_options.dart';
+//import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:maasapp/core/utils/colors.dart';
+import 'package:maasapp/core/widgets/reusable_widgets/reusable.dart';
+import 'package:maasapp/features/Register/views/screen/forgetPass.dart';
+import 'package:maasapp/features/Register/views/screen/registerr.dart';
+import 'package:maasapp/features/Register/views/screen/page.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
 
-  @override
-  State<Login> createState() => _LoginState();
-}
+class RegisterScreen extends StatelessWidget {
 
-class _LoginState extends State<Login> {
-  late final TextEditingController _email;
-  late final TextEditingController _password;
+  final  _email = TextEditingController();
+  final  _password = TextEditingController();
 
-  @override
-  void initState() {
-    _email = TextEditingController();
-    _password = TextEditingController();
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _email.dispose();
-    _password.dispose();
-
-    super.dispose();
-  }
+ RegisterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 30),
-        backgroundColor: const Color(0xFF153158), // Use const for static text
-      ),
       body: Container(
-        color: const Color(0xFF153158),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextField(
-                controller: _email,
-                enableSuggestions: false,
-                autocorrect: false,
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                    labelText: 'Email',
-                    labelStyle: TextStyle(
-                        color: Colors.white, fontSize: 20), // Set title color
-                    icon: Icon(Icons.email),
-                    iconColor: Colors.white),
-              ),
-              const SizedBox(height: 16.0),
-              TextField(
-                controller: _password,
-                obscureText: true,
-                enableSuggestions: false,
-                autocorrect: false,
-                decoration: const InputDecoration(
-                    labelText: 'Password',
-                    labelStyle: TextStyle(
-                        color: Colors.white, fontSize: 20), // Set title color
-                    icon: Icon(Icons.lock),
-                    iconColor: Colors.white),
-              ),
-              const SizedBox(height: 16.0),
-              TextButton(
-                  onPressed: () async {
-                    final email = _email.text;
-                    final password = _password.text;
-                    try {
-                      final userCredential = await FirebaseAuth.instance
-                          .signInWithEmailAndPassword(
-                              email: email, password: password);
-                      print(userCredential);
-                    } on FirebaseAuthException catch (e) {
-                      if (e.code == 'user-not-found') {
-                        print('user not found');
-                      } else if (e.code == 'wrong password') {
-                        print('Wrong Password');
-                      }
-
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                          '/screen/', (route) => false);
-                    }
-                  },
-                  child: const Text("Login")),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil('/register/', (route) => false);
-                },
-                child: const Text('Register From Here'),
-              )
-            ],
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        decoration: BoxDecoration(gradient: LinearGradient(colors: [hexStringToColor("0xFF153158")], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+            child: SingleChildScrollView(child: Padding(padding: EdgeInsets.fromLTRB(20, MediaQuery.of(context).size.height * 0.2, 20, 0),
+                child: Column(
+                  children: <Widget> [
+                    logoWidget("assets/images/LoginPic.jpg"),
+                    const SizedBox(
+                  height: 30,
+                ),
+                reusableTextField("Enter your email", Icons.person_outline, false,
+                    _email),
+                const SizedBox(
+                  height: 20,
+                ),
+                reusableTextField("Enter Password", Icons.lock_outline, true,
+                    _password),
+                const SizedBox(
+                  height: 5,
+                ),
+                forgetPassword(context),
+                firebaseUIButton(context, "Sign In", () async {
+                 await FirebaseAuth.instance
+                      .signInWithEmailAndPassword(
+                          email: _email.text,
+                          password: _password.text)
+                      .then((value) {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()));
+                  }).onError((error, stackTrace) {
+                    print("Error ${error.toString()}");
+                  });
+                }),
+              ],
+            ),
           ),
         ),
+      ),
+    );
+  }
+
+  void signInUser(BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _email.text,
+        password: _password.text
+      );
+      Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+    } catch (error) {
+      print("Error ${error.toString()}");
+    }
+  }
+
+  Widget signUpOption(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text("Don't have an account?", style: TextStyle(color: Colors.white70)),
+        GestureDetector(
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
+          },
+          child: const Text(" Sign Up", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        )
+      ],
+    );
+  }
+
+
+  Widget forgetPassword(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: 35,
+      alignment: Alignment.bottomRight,
+      child: TextButton(
+        child: const Text(
+          "Forgot Password?",
+          style: TextStyle(color: Colors.white70),
+          textAlign: TextAlign.right,
+        ),
+        onPressed: () => Navigator.push(
+            context, MaterialPageRoute(builder: (context) => ResetPassword())),
       ),
     );
   }
