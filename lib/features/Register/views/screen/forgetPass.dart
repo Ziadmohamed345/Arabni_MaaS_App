@@ -12,7 +12,7 @@ class ResetPassword extends StatefulWidget {
 }
 
 class _ResetPasswordState extends State<ResetPassword> {
-  TextEditingController _emailTextController = TextEditingController();
+  TextEditingController _email = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,13 +43,13 @@ class _ResetPasswordState extends State<ResetPassword> {
                   height: 20,
                 ),
                 reusableTextField("Enter Email Id", Icons.person_outline, false,
-                    _emailTextController),
+                    _email),
                 const SizedBox(
                   height: 20,
                 ),
                 firebaseUIButton(context, "Reset Password", () {
                   FirebaseAuth.instance
-                      .sendPasswordResetEmail(email: _emailTextController.text)
+                      .sendPasswordResetEmail(email: _email.text)
                       .then((value) => Navigator.of(context).pop());
                 })
               ],

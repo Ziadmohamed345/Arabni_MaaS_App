@@ -8,13 +8,16 @@ import 'package:maasapp/features/Register/views/screen/registerr.dart';
 import 'package:maasapp/features/Register/views/screen/page.dart';
 
 
-class RegisterScreen extends StatelessWidget {
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
-  final  _email = TextEditingController();
-  final  _password = TextEditingController();
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
 
- RegisterScreen({super.key});
-
+class _RegisterScreenState extends State<RegisterScreen> {
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _password = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
