@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:maasapp/core/widgets/reusable_widgets/reusable.dart';
-import 'package:maasapp/features/Register/views/screen/page.dart';
+//import 'package:maasapp/features/Register/views/screen/page.dart';
 import 'package:maasapp/core/utils/colors.dart';
 import 'package:flutter/material.dart';
 
