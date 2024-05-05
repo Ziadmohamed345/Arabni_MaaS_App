@@ -1,69 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:maasapp/core/utils/colors.dart';
 import 'package:maasapp/core/widgets/reusable_widgets/reusable.dart';
-//import 'package:maasapp/core/utils/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:maasapp/features/Register/views/screen/Home.dart';
 //import 'firebase_options.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _LoginState extends State<Login> {
-  late final TextEditingController _firstname;
-  late final TextEditingController _lastname;
-  late final TextEditingController _email;
-  late final TextEditingController _password;
-  late final TextEditingController _number;
+class _SignUpScreenState extends State<SignUpScreen> {
 
-  @override
-  void initState() {
-    super.initState();
-    // Initialize the TextEditingController
-    _firstname = TextEditingController();
-    _lastname = TextEditingController();
-    _email = TextEditingController();
-    _password = TextEditingController();
-    _number = TextEditingController();
-  }
-
-
-
-  @override
-  void dispose() {
-    // Dispose the controller when the widget is disposed
-    _firstname.dispose();
-    _lastname.dispose();
-    _email.dispose();
-    _password.dispose();
-    _number.dispose();
-
-    super.dispose();
-  }
-
+  final _passwordTextController = TextEditingController();
+  final _emailTextController = TextEditingController();
+  final _userNameTextController = TextEditingController();
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF153158),
-        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 30),
+        backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text(
-          "R E G I S T E R",
+          "Sign Up",
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
       ),
       body: Container(
-          color: const Color(0xFF153158),
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
               gradient: LinearGradient(colors: [
-            Colors.transparent,
+            hexStringToColor("CB2B93"),
+            hexStringToColor("9546C4"),
+            hexStringToColor("5E61F4")
           ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
           child: SingleChildScrollView(
               child: Padding(
@@ -73,37 +47,26 @@ class _LoginState extends State<Login> {
                 const SizedBox(
                   height: 20,
                 ),
-                reusableTextField("Enter your first name", Icons.person_outline, false,
-                    _firstname),
+                reusableTextField("Enter UserName", Icons.person_outline, false,
+                    _userNameTextController),
                 const SizedBox(
                   height: 20,
                 ),
-                reusableTextField("Enter your last name", Icons.person_outline, false,
-                    _lastname),
+                reusableTextField("Enter Email Id", Icons.person_outline, false,
+                    _emailTextController),
                 const SizedBox(
                   height: 20,
                 ),
-                reusableTextField("Enter your email", Icons.lock_outlined, true,
-                    _email),
+                reusableTextField("Enter Password", Icons.lock_outlined, true,
+                    _passwordTextController),
                 const SizedBox(
                   height: 20,
                 ),
-                 reusableTextField("Enter your password", Icons.lock_outlined, true,
-                    _password),
-                const SizedBox(
-                  height: 20,
-                ),
-                 reusableTextField("Enter your phone number", Icons.lock_outlined, true,
-                    _number),
-                const SizedBox(
-                  height: 20,
-                ),
-                
-                firebaseUIButton(context, "Register", () {
+                firebaseUIButton(context, "Sign Up", () {
                   FirebaseAuth.instance
                       .createUserWithEmailAndPassword(
-                          email: _email.text,
-                          password: _password.text)
+                          email: _emailTextController.text,
+                          password: _passwordTextController.text)
                       .then((value) {
                     print("Created New Account");
                     Navigator.push(context,
