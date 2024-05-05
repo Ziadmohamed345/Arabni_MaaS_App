@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:maasapp/core/utils/string_constants.dart';
 import 'package:maasapp/features/Register/views/screen/login.dart';
-//import 'package:maasapp/features/Register/views/screen/registerr.dart';
+import 'package:maasapp/features/Register/views/screen/registerr.dart';
 //import 'package:maasapp/features/Register/views/screen/forgetPass.dart';
 //import 'package:maasapp/features/Register/views/screen/Home.dart';
 

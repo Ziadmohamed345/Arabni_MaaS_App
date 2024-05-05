@@ -60,7 +60,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     print("Error ${error.toString()}");
                   });
                 }),
-               registerrOption(context),
+               //registerrOption(context),
               ],
             ),
           ),
@@ -69,17 +69,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  //void signInUser(BuildContext context) async {
-    //try {
-      //await FirebaseAuth.instance.signInWithEmailAndPassword(
-        //email: _email.text,
-        //password: _password.text
-      //);
-      //Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
-    //} catch (error) {
-      //print("Error ${error.toString()}");
-    //}
-  //}
+  void login(BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _email.text,
+        password: _password.text
+      );
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+    } catch (error) {
+      print("Error ${error.toString()}");
+    }
+  }
 
   Row registerrOption(BuildContext context) {
     return Row(
