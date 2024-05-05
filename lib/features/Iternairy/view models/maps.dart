@@ -48,7 +48,7 @@ class _MapScreenState extends State<MapScreen> {
               height: 300,
               child: MapboxMap(
                 accessToken:
-                    'pk.eyJ1IjoidG9rYWVsYWRseSIsImEiOiJjbHZ0em83czgwaWI1Mmltamd5OTg0YjRqIn0.1uYtYa-_SxHmyR8KthDLbA',
+                    'sk.eyJ1IjoidG9rYWVsYWRseSIsImEiOiJjbHZ1M2dpd3kxNGQ3MmltaDQyanEwb3RkIn0.y1s2RSrJnj5qP2Ysbahktg',
                 onMapCreated: (controller) {
                   setState(() {
                     _controller = controller;
