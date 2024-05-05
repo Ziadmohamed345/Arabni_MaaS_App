@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:maasapp/core/utils/colors.dart';
 import 'package:maasapp/core/widgets/reusable_widgets/reusable.dart';
 import 'package:maasapp/features/Register/views/screen/forgetPass.dart';
 import 'package:maasapp/features/Register/views/screen/registerr.dart';
@@ -16,13 +14,13 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final TextEditingController _email = TextEditingController();
-  final TextEditingController _password = TextEditingController();
+  final  _email = TextEditingController();
+  final  _password = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF153158),
+        backgroundColor: const Color(0xFF153158),
         titleTextStyle: const TextStyle(color: Colors.white, fontSize: 30),
         title: const Text("L O G I N"),
       ),
@@ -31,7 +29,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         color: const Color(0xFF153158),
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        decoration: BoxDecoration(gradient: LinearGradient(colors: [hexStringToColor("0xFF153158")], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
+        decoration: const BoxDecoration(gradient: LinearGradient(colors: [Colors.transparent], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
             child: SingleChildScrollView(child: Padding(padding: EdgeInsets.fromLTRB(20, MediaQuery.of(context).size.height * 0.2, 20, 0),
                 child: Column(
                   children: <Widget> [
@@ -50,18 +48,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   height: 5,
                 ),
                 forgetPassword(context),
-                firebaseUIButton(context, "login In", () async {
+                firebaseUIButton(context, "L O G I N ", () async {
                  await FirebaseAuth.instance
                       .signInWithEmailAndPassword(
                           email: _email.text,
                           password: _password.text)
                       .then((value) {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => HomeScreen()));
+                        MaterialPageRoute(builder: (context) => const HomeScreen()));
                   }).onError((error, stackTrace) {
                     print("Error ${error.toString()}");
                   });
                 }),
+               registerrOption(context),
               ],
             ),
           ),
@@ -70,28 +69,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  void signInUser(BuildContext context) async {
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _email.text,
-        password: _password.text
-      );
-      Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
-    } catch (error) {
-      print("Error ${error.toString()}");
-    }
-  }
+  //void signInUser(BuildContext context) async {
+    //try {
+      //await FirebaseAuth.instance.signInWithEmailAndPassword(
+        //email: _email.text,
+        //password: _password.text
+      //);
+      //Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+    //} catch (error) {
+      //print("Error ${error.toString()}");
+    //}
+  //}
 
-  Widget signUpOption(BuildContext context) {
+  Row registerrOption(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const Text("Don't have an account?", style: TextStyle(color: Colors.white70)),
         GestureDetector(
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const Login()));
           },
-          child: const Text(" Sign Up", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          child: const Text(" Register ", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
         )
       ],
     );
@@ -110,7 +110,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           textAlign: TextAlign.right,
         ),
         onPressed: () => Navigator.push(
-            context, MaterialPageRoute(builder: (context) => ResetPassword())),
+            context, MaterialPageRoute(builder: (context) => const ResetPassword())),
       ),
     );
   }

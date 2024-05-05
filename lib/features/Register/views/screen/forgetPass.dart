@@ -1,7 +1,7 @@
+// ignore_for_file: file_names, library_private_types_in_public_api
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:maasapp/core/widgets/reusable_widgets/reusable.dart';
-//import 'package:maasapp/features/Register/views/screen/page.dart';
-import 'package:maasapp/core/utils/colors.dart';
+//import 'package:maasapp/features/Register/views/screen/Home.dart';
 import 'package:flutter/material.dart';
 
 class ResetPassword extends StatefulWidget {
@@ -12,13 +12,13 @@ class ResetPassword extends StatefulWidget {
 }
 
 class _ResetPasswordState extends State<ResetPassword> {
-  TextEditingController _email = TextEditingController();
+  final _email = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor:const Color(0xFF153158),
         elevation: 0,
         title: const Text(
           "Reset Password",
@@ -28,21 +28,18 @@ class _ResetPasswordState extends State<ResetPassword> {
       body: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [
-            hexStringToColor("CB2B93"),
-            hexStringToColor("9546C4"),
-            hexStringToColor("5E61F4")
+          decoration:const BoxDecoration(
+              gradient: LinearGradient(colors: [ Color(0xFF153158)
           ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
           child: SingleChildScrollView(
               child: Padding(
-            padding: EdgeInsets.fromLTRB(20, 120, 20, 0),
+            padding: const EdgeInsets.fromLTRB(20, 120, 20, 0),
             child: Column(
               children: <Widget>[
                 const SizedBox(
                   height: 20,
                 ),
-                reusableTextField("Enter Email Id", Icons.person_outline, false,
+                reusableTextField("Enter Email", Icons.person_outline, false,
                     _email),
                 const SizedBox(
                   height: 20,

@@ -1,18 +1,19 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:maasapp/core/utils/string_constants.dart';
 import 'package:maasapp/features/Register/views/screen/login.dart';
-import 'package:maasapp/features/Register/views/screen/registerr.dart';
-import 'package:maasapp/features/Register/views/screen/forgetPass.dart';
-import 'package:maasapp/features/Register/views/screen/Home.dart';
+//import 'package:maasapp/features/Register/views/screen/registerr.dart';
+//import 'package:maasapp/features/Register/views/screen/forgetPass.dart';
+//import 'package:maasapp/features/Register/views/screen/Home.dart';
 
 
 
 
 void main() async {
-  Future.wait([ScreenUtil.ensureScreenSize()]).then((value) {
-    runApp(const MyApp());
-  });
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
         return const MaterialApp(
           debugShowCheckedModeBanner: false,
           title: StringConstants.appName,
-          home: Login(),
+          home: RegisterScreen(),
         );
       },
     );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:maasapp/core/widgets/reusable_widgets/reusable.dart';
-import 'package:maasapp/core/utils/colors.dart';
+//import 'package:maasapp/core/utils/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:maasapp/features/Register/views/screen/Home.dart';
 //import 'firebase_options.dart';
@@ -49,7 +49,7 @@ class _LoginState extends State<Login> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Color(0xFF153158),
+        backgroundColor: const Color(0xFF153158),
         titleTextStyle: const TextStyle(color: Colors.white, fontSize: 30),
         elevation: 0,
         title: const Text(
@@ -61,13 +61,13 @@ class _LoginState extends State<Login> {
           color: const Color(0xFF153158),
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               gradient: LinearGradient(colors: [
-            hexStringToColor("0xFF153158"),
+            Colors.transparent,
           ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
           child: SingleChildScrollView(
               child: Padding(
-            padding: EdgeInsets.fromLTRB(20, 120, 20, 0),
+            padding: const EdgeInsets.fromLTRB(20, 120, 20, 0),
             child: Column(
               children: <Widget>[
                 const SizedBox(
@@ -107,7 +107,7 @@ class _LoginState extends State<Login> {
                       .then((value) {
                     print("Created New Account");
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => HomeScreen()));
+                        MaterialPageRoute(builder: (context) => const HomeScreen()));
                   }).onError((error, stackTrace) {
                     print("Error ${error.toString()}");
                   });
