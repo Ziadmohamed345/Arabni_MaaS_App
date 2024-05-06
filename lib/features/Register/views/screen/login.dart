@@ -1,6 +1,7 @@
 //import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:maasapp/features/Register/views/screen/page.dart';
 //import 'firebase_options.dart';
 
 class Login extends StatefulWidget {
@@ -18,7 +19,6 @@ class _LoginState extends State<Login> {
   void initState() {
     _email = TextEditingController();
     _password = TextEditingController();
-
     super.initState();
   }
 
@@ -26,15 +26,22 @@ class _LoginState extends State<Login> {
   void dispose() {
     _email.dispose();
     _password.dispose();
-
     super.dispose();
+  }
+
+  // Define the firebaseUIButton method
+  Widget firebaseUIButton(BuildContext context, String text, VoidCallback onPressed) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      child: Text(text),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title: const Text('L O G I N '),
         titleTextStyle: const TextStyle(color: Colors.white, fontSize: 30),
         backgroundColor: const Color(0xFF153158), // Use const for static text
       ),
@@ -51,11 +58,14 @@ class _LoginState extends State<Login> {
                 autocorrect: false,
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(
-                    labelText: 'Email',
-                    labelStyle: TextStyle(
-                        color: Colors.white, fontSize: 20), // Set title color
-                    icon: Icon(Icons.email),
-                    iconColor: Colors.white),
+                  labelText: 'Email',
+                  labelStyle: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                  icon: Icon(Icons.email),
+                  iconColor: Colors.white,
+                ),
               ),
               const SizedBox(height: 16.0),
               TextField(
@@ -64,41 +74,51 @@ class _LoginState extends State<Login> {
                 enableSuggestions: false,
                 autocorrect: false,
                 decoration: const InputDecoration(
-                    labelText: 'Password',
-                    labelStyle: TextStyle(
-                        color: Colors.white, fontSize: 20), // Set title color
-                    icon: Icon(Icons.lock),
-                    iconColor: Colors.white),
+                  labelText: 'Password',
+                  labelStyle: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                  icon: Icon(Icons.lock),
+                  iconColor: Colors.white,
+                ),
               ),
               const SizedBox(height: 16.0),
-              TextButton(
-                  onPressed: () async {
-                    final email = _email.text;
-                    final password = _password.text;
-                    try {
-                      final userCredential = await FirebaseAuth.instance
-                          .signInWithEmailAndPassword(
-                              email: email, password: password);
-                      print(userCredential);
-                    } on FirebaseAuthException catch (e) {
-                      if (e.code == 'user-not-found') {
-                        print('user not found');
-                      } else if (e.code == 'wrong password') {
-                        print('Wrong Password');
-                      }
-
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                          '/screen/', (route) => false);
-                    }
-                  },
-                  child: const Text("Login")),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil('/register/', (route) => false);
-                },
-                child: const Text('Register From Here'),
-              )
+              firebaseUIButton(context, "Log In", () async {
+                try {
+                  await FirebaseAuth.instance.signInWithEmailAndPassword(
+                    email: _email.text,
+                    password: _password.text,
+                  );
+                  print("User signed in successfully");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Screen()),
+                  );
+                } catch (error) {
+                  print("Error signing in: $error");
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text("Error"),
+                        content: const Text(
+                            "Failed to sign in. Please check your credentials."),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context); // Close the dialog
+                            },
+                            child: const Text("OK"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
+              }),
+              const SizedBox(height: 16.0),
+              //RegisterButton(), // Use the new RegisterButton widget
             ],
           ),
         ),
@@ -106,3 +126,5 @@ class _LoginState extends State<Login> {
     );
   }
 }
+
+
