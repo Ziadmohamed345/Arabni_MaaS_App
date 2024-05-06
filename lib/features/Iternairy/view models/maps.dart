@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mapbox_gl/mapbox_gl.dart' as mapbox;
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+//import 'package:mapbox_gl/mapbox_gl.dart' as mapbox;
 
 void main() {
   runApp(MyApp());
@@ -21,30 +23,22 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  final String accessToken =
-      'pk.eyJ1IjoidG9rYWVsYWRseSIsImEiOiJjbHZ0em83czgwaWI1Mmltamd5OTg0YjRqIn0.1uYtYa-_SxHmyR8KthDLbA'; // Replace with your access token
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Map Screen'),
+ @override
+Widget build(BuildContext context) {
+  return FlutterMap(
+    options: MapOptions(
+      initialCenter: LatLng(51.509364, -0.128928),
+      initialZoom: 9.2,
+    ),
+    children: [
+      TileLayer(
+        urlTemplate: 'https://api.mapbox.com/styles/v1/tokaeladly/clvuwxqoh022201qpfzn892b4/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoidG9rYWVsYWRseSIsImEiOiJjbHZ0em83czgwaWI1Mmltamd5OTg0YjRqIn0.1uYtYa-_SxHmyR8KthDLbA',
+        additionalOptions: {
+          'accessToken': 'pk.eyJ1IjoidG9rYWVsYWRseSIsImEiOiJjbHZ0em83czgwaWI1Mmltamd5OTg0YjRqIn0.1uYtYa-_SxHmyR8KthDLbA',
+          'id':'mapbox.mapbox-streets-vB'
+        }
       ),
-      body: Center(
-        child: mapbox.MapboxMap(
-          accessToken: accessToken,
-          onMapCreated: _onMapCreated,
-          initialCameraPosition: mapbox.CameraPosition(
-            target: mapbox.LatLng(
-                37.7749, -122.4194), // Example initial location (San Francisco)
-            zoom: 11.0,
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _onMapCreated(mapbox.MapboxMapController controller) {
-    // Add map controller initialization here if needed
-  }
+    ],
+  );
+}
 }
