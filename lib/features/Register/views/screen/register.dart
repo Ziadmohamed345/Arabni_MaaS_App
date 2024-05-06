@@ -126,13 +126,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     }
                      
                   },
-                  child: const Text("Register")
+                  child: const Text("Register", style: TextStyle(color: Colors.white70),)
                   ),
                   TextButton(
                     onPressed: () {
                     Navigator.of(context).pushNamedAndRemoveUntil('/login/', (route) => false);
 
-                  }, child: const Text('Already Registered? Login Here!')
+                  }, child: const Text("Already Registered? Login Here!" , style: TextStyle(color: Colors.white70),)
                   )
             ],
           ),

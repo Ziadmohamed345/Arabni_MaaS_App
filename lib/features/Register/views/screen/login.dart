@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:maasapp/features/Register/views/screen/page.dart';
+import 'package:maasapp/features/Register/views/screen/register.dart';
 //import 'firebase_options.dart';
 
 class Login extends StatefulWidget {
@@ -119,6 +120,19 @@ class _LoginState extends State<Login> {
               }),
               const SizedBox(height: 16.0),
               //RegisterButton(), // Use the new RegisterButton widget
+
+              TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const RegisterScreen()), // Navigate to RegisterScreen
+                );
+              },
+               child: const Text(
+                  'Register',
+                  style: TextStyle(color: Colors.white70),
+                ),
+              ),
             ],
           ),
         ),
@@ -126,5 +140,6 @@ class _LoginState extends State<Login> {
     );
   }
 }
+
 
 
