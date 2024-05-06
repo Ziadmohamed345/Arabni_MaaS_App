@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:maasapp/core/utils/string_constants.dart';
-import 'package:maasapp/features/Iternairy/view models/maps.dart';
+import 'package:maasapp/features/Iternairy/view models/screenUI.dart';
 
 void main() async {
   Future.wait([ScreenUtil.ensureScreenSize()]).then((value) {
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: StringConstants.appName,
-          home: MapScreen(),
+          home: LocationScreen(),
         );
       },
     );

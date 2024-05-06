@@ -36,7 +36,6 @@ dependencies:
     sdk: flutter
   firebase_core: ^2.30.1  # Use the latest version available
   firebase_auth: ^4.19.4 # Use the latest version
-  mapbox_gl: ^0.16.0
 
 
 

@@ -23,22 +23,23 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
- @override
-Widget build(BuildContext context) {
-  return FlutterMap(
-    options: MapOptions(
-      initialCenter: LatLng(51.509364, -0.128928),
-      initialZoom: 9.2,
-    ),
-    children: [
-      TileLayer(
-        urlTemplate: 'https://api.mapbox.com/styles/v1/tokaeladly/clvuwxqoh022201qpfzn892b4/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoidG9rYWVsYWRseSIsImEiOiJjbHZ0em83czgwaWI1Mmltamd5OTg0YjRqIn0.1uYtYa-_SxHmyR8KthDLbA',
-        additionalOptions: {
-          'accessToken': 'pk.eyJ1IjoidG9rYWVsYWRseSIsImEiOiJjbHZ0em83czgwaWI1Mmltamd5OTg0YjRqIn0.1uYtYa-_SxHmyR8KthDLbA',
-          'id':'mapbox.mapbox-streets-vB'
-        }
+  @override
+  Widget build(BuildContext context) {
+    return FlutterMap(
+      options: MapOptions(
+        initialCenter: LatLng(51.509364, -0.128928),
+        initialZoom: 9.2,
       ),
-    ],
-  );
-}
+      children: [
+        TileLayer(
+            urlTemplate:
+                'https://api.mapbox.com/styles/v1/tokaeladly/clvuwxqoh022201qpfzn892b4/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoidG9rYWVsYWRseSIsImEiOiJjbHZ0em83czgwaWI1Mmltamd5OTg0YjRqIn0.1uYtYa-_SxHmyR8KthDLbA',
+            additionalOptions: {
+              'accessToken':
+                  'pk.eyJ1IjoidG9rYWVsYWRseSIsImEiOiJjbHZ0em83czgwaWI1Mmltamd5OTg0YjRqIn0.1uYtYa-_SxHmyR8KthDLbA',
+              'id': 'mapbox.mapbox-streets-vB'
+            }),
+      ],
+    );
+  }
 }
