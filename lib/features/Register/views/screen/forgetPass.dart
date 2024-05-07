@@ -12,25 +12,40 @@ class ForgetPasswordScreen extends StatefulWidget {
 }
 
 class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
-  late final TextEditingController _oldPassword;
-  late final TextEditingController _newPassword;
-  late final TextEditingController _confirmPassword;
+  late final TextEditingController _email;
+
 
 
   @override
   void initState() {
-    _oldPassword = TextEditingController();
-    _newPassword = TextEditingController();
-    _confirmPassword = TextEditingController();
+    _email = TextEditingController();
     super.initState();
   }
 
   @override
   void dispose() {
-    _oldPassword.dispose();
-    _newPassword.dispose();
-    _confirmPassword.dispose();
+    _email.dispose();
     super.dispose();
+  }
+
+  Future passwordReset() async{
+    try{
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: _email.text.trim());
+      showDialog(context: context, builder: (context) {
+        return const AlertDialog(content: Text("Check your E_mail"),
+        );
+      },
+      
+      );
+    } on FirebaseAuthException catch(e) {
+      print(e);
+      showDialog(context: context, builder: (context) {
+        return AlertDialog(content: Text(e.message.toString()),
+        );
+      },
+      
+      );
+    }
   }
 
 
@@ -82,7 +97,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
               ),
               const SizedBox(height: 20),
               const Text(
-                "Create New Password",
+                "Reset your password",
                 style: TextStyle(
                   color: Color.fromARGB(255, 249, 248, 248),
                   fontSize: 22,
@@ -91,143 +106,33 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
               ),
               const SizedBox(height: 20),
               TextFormField(
-                controller: _oldPassword,
+                controller: _email,
                 obscureText: true,
                 decoration: const InputDecoration(
-                  labelText: 'Enter Old Password',
+                  labelText: 'Enter your E-mail',
                   labelStyle: TextStyle(
                     color: Colors.black,
                   ),
-                  filled: true,
-                  fillColor: Colors.white,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 0.5, vertical: 0.5), // Corrected padding values
-                ),
-                style: const TextStyle(color: Colors.black),
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _newPassword,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Enter New Password',
-                  labelStyle: TextStyle(
+                  hintText: 'Enter your email',
+                  hintStyle: TextStyle(
                     color: Colors.black,
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
                   ),
                   filled: true,
                   fillColor: Colors.white,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 0.5, vertical: 0.5), // Corrected padding values
+                  contentPadding: EdgeInsets.symmetric(horizontal: 25.0), // Corrected padding values
                 ),
                 style: const TextStyle(color: Colors.black),
               ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _confirmPassword,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Confirm New Password',
-                  labelStyle: TextStyle(
-                    color: Colors.black,
-                  ),
-                  filled: true,
-                  fillColor: Colors.white,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 0.5, vertical: 0.5), // Corrected padding values
-                ),
-                style: const TextStyle(color: Colors.black),
+              MaterialButton(onPressed: passwordReset,
+              color: const Color.fromARGB(255, 238, 50, 53),
+              child: const Text("Reset Password"),
               ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () async {
-                  final oldPassword = _oldPassword.text;
-                  final newPassword = _newPassword.text;
-                  final confirmPassword = _confirmPassword.text;
-
-                  if (newPassword == confirmPassword) {
-                    if (newPassword == oldPassword) {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Password Unchanged'),
-                            content: const Text('The new password is the same as the old password.'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop(); // Close the dialog
-                                },
-                                child: const Text('OK'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    } else {
-                      final auth = FirebaseAuth.instance;
-                      final currentUser = auth.currentUser;
-                      final database = FirebaseDatabase.instance.reference();
-
-                      if (currentUser != null) {
-                        final credential = EmailAuthProvider.credential(email: currentUser.email!, password: oldPassword);
-                        try {
-                          await auth.currentUser!.reauthenticateWithCredential(credential);
-                          DataSnapshot snapshot = (await database.child('users').child(currentUser.uid).child('password').once()) as DataSnapshot;
-                          final existingPassword = snapshot.value.toString();
-
-                          if (existingPassword == newPassword) {
-                            print('Password already used by another user.'); // Debug message
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: const Text('Password Already Used'),
-                                  content: const Text('The new password is already in use.'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop(); // Close the dialog
-                                      },
-                                      child: const Text('OK'),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          } else {
-                            await auth.currentUser!.updatePassword(newPassword);
-                            Navigator.of(context).pushNamedAndRemoveUntil('/login/', (route) => false);
-                          }
-                        } catch (e) {
-                          print('Error: $e'); // Debug message for reauthentication error
-                        }
-                      }
-                    }
-                  } else {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('Passwords Mismatch'),
-                          content: const Text('The new password and confirm password do not match.'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop(); // Close the dialog
-                              },
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Color.fromARGB(255, 253, 251, 251),
-                  backgroundColor: const Color.fromARGB(255, 238, 50, 53),
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                ),
-                child: const Text('Confirm'),
-              ),
-              const SizedBox(height: 0.5),
+              
+              
+              const SizedBox(height: 25),
               Image.asset(
                 'assets/images/LoginPic.jpg',
                 width: 200,
