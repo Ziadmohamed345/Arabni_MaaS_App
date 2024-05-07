@@ -86,7 +86,7 @@ class _LoginState extends State<Login> {
               ),
               const SizedBox(height: 16.0),
               firebaseUIButton(context, "Log In", () async {
-                try {
+                //try {
                   await FirebaseAuth.instance.signInWithEmailAndPassword(
                     email: _email.text,
                     password: _password.text,
@@ -96,27 +96,27 @@ class _LoginState extends State<Login> {
                     context,
                     MaterialPageRoute(builder: (context) => const Screen()),
                   );
-                } catch (error) {
-                  print("Error signing in: $error");
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: const Text("Error"),
-                        content: const Text(
-                            "Failed to sign in. Please check your credentials."),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context); // Close the dialog
-                            },
-                            child: const Text("OK"),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                }
+                //} //catch (error) {
+                  //print("Error signing in: $error");
+                  //showDialog(
+                    //context: context,
+                    //builder: (BuildContext context) {
+                      //return AlertDialog(
+                        //title: const Text("Error"),
+                        //content: const Text(
+                            //"Failed to sign in. Please check your credentials."),
+                        //actions: [
+                          //TextButton(
+                            //onPressed: () {
+                              //Navigator.pop(context); // Close the dialog
+                            //},
+                            //child: const Text("OK"),
+                          //),
+                        //],
+                      //);
+                    //},
+                  //);
+                //}
               }),
               const SizedBox(height: 16.0),
               //RegisterButton(), // Use the new RegisterButton widget
@@ -140,6 +140,3 @@ class _LoginState extends State<Login> {
     );
   }
 }
-
-
-

@@ -111,23 +111,67 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 keyboardType: TextInputType.phone,
               ),
               TextButton(
-                  onPressed: () async {
-                    final email = _email.text;
-                    final password = _password.text;
-                    try {
-                      final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
-                      print(userCredential);
-                    } on FirebaseAuthException catch (e) {
-                      if (e.code == 'weak password') {
-                        print('weak password');
-                      } else if (e.code == 'email already in use'){
-                        print('email already in use');
-                      }
-                    }
-                     
-                  },
-                  child: const Text("Register", style: TextStyle(color: Colors.white70),)
-                  ),
+                onPressed: () async {
+                  final email = _email.text;
+                  final password = _password.text;
+                  //try {
+                    final userCredential =
+                        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                      email: email,
+                      password: password,
+                    );
+                    // Show success message
+                    showDialog(
+                      // ignore: use_build_context_synchronously
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Success'),
+                          content: const Text('Registered successfully!'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(); // Close the dialog
+                              },
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }, //on FirebaseAuthException catch (e) {
+                    //String errorMessage = 'Registration failed!';
+                    //if (e.code == 'weak password') {
+                      //errorMessage = 'Weak password';
+                    //} else if (e.code == 'email already in use') {
+                      //errorMessage = 'Email already in use';
+                    //}
+                    // Show error message
+                    //showDialog(
+                      //context: context,
+                      //builder: (BuildContext context) {
+                        //return AlertDialog(
+                          //title: const Text('E R R O R'),
+                          //content: Text(errorMessage),
+                          //actions: [
+                            //TextButton(
+                              //onPressed: () {
+                                //Navigator.of(context).pop(); // Close the dialog
+                              //},
+                              //child: const Text('OK'),
+                            //),
+                          //],
+                        //);
+                      //},
+                    //);
+                  //}
+                //},
+            
+                child: const Text(
+                  'Register',
+                  style: TextStyle(color: Colors.white70),
+                ),
+              ),
                   TextButton(
                     onPressed: () {
                     Navigator.of(context).pushNamedAndRemoveUntil('/login/', (route) => false);
