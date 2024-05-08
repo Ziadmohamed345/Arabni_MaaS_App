@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-
 void main() {
   runApp(MyApp());
 }
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -15,23 +13,20 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
 class LocationScreen extends StatefulWidget {
   @override
   _LocationScreenState createState() => _LocationScreenState();
 }
-
 class _LocationScreenState extends State<LocationScreen> {
   TextEditingController _locationController = TextEditingController();
   TextEditingController _destinationController = TextEditingController();
   String location = '';
   String destination = '';
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Location Screen'),
+        title: Text('LocationScreen'),
       ),
       body: Stack(
         children: [
@@ -81,7 +76,6 @@ class _LocationScreenState extends State<LocationScreen> {
       ),
     );
   }
-
   void _showLocationDialog() {
     showModalBottomSheet(
       context: context,
@@ -107,7 +101,6 @@ class _LocationScreenState extends State<LocationScreen> {
       },
     );
   }
-
   Widget _buildLocationBox(String text) {
     return Container(
       padding: EdgeInsets.all(10),
@@ -121,7 +114,6 @@ class _LocationScreenState extends State<LocationScreen> {
       ),
     );
   }
-
   @override
   void dispose() {
     _locationController.dispose();
@@ -129,7 +121,6 @@ class _LocationScreenState extends State<LocationScreen> {
     super.dispose();
   }
 }
-
 class MapScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
