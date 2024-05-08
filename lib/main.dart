@@ -5,10 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:maasapp/features/Register/views/screen/forgetPass.dart';
 //import 'package:flutter_screenutil/flutter_screenutil.dart';
 //import 'package:maasapp/core/utils/string_constants.dart';
-//import 'package:maasapp/features/Iternairy/view models/screenUI.dart';
+//import 'package:maasapp/features/Bus lines/viewmodels/busLines';
 import 'package:maasapp/features/Register/views/screen/login.dart';
 import 'package:maasapp/features/Register/views/screen/page.dart';
 import 'package:maasapp/features/Register/views/screen/register.dart';
+import 'package:maasapp/features/BusLines/viewmodels/busLines.dart';
+import 'package:maasapp/features/BusLines/viewmodels/busStops.dart';
 import 'package:maasapp/firebase_options.dart';
 
 void main() async {
@@ -39,7 +41,6 @@ class MyApp extends StatelessWidget {
               '/register/': (context) => const RegisterScreen(),
               '/page/': (context) => const Screen(),
               '/forgetPass/': (context) => const ForgetPasswordScreen(),
-
             },
           );
         } else {
