@@ -2,7 +2,8 @@
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:maasapp/features/Register/views/screen/forgetPass.dart';
+//import 'package:flutter_screenutil/flutter_screenutil.dart';
 //import 'package:maasapp/core/utils/string_constants.dart';
 //import 'package:maasapp/features/Iternairy/view models/screenUI.dart';
 import 'package:maasapp/features/Register/views/screen/login.dart';
@@ -37,6 +38,8 @@ class MyApp extends StatelessWidget {
               '/login/': (context) => const Login(),
               '/register/': (context) => const RegisterScreen(),
               '/page/': (context) => const Screen(),
+              '/forgetPass/': (context) => const ForgetPasswordScreen(),
+
             },
           );
         } else {
