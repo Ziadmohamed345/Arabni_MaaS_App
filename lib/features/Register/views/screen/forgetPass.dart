@@ -1,130 +1,142 @@
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class ForgetPasswordScreen extends StatefulWidget {
+  const ForgetPasswordScreen({super.key});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  State<ForgetPasswordScreen> createState() => _ForgetPasswordScreenState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  final TextEditingController _mobileController = TextEditingController();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
+  late final TextEditingController _email;
 
-  // Regular expression pattern for Egyptian mobile numbers
-  static final RegExp _egyptMobileRegex = RegExp(r'^(01[0-2]|015)[0-9]{8}$');
 
-  // Function to handle sending verification code
-  Future<void> _sendVerificationCode(
-      BuildContext context, String mobile) async {
-    if (!_egyptMobileRegex.hasMatch(mobile)) {
-      // Show error message if the mobile number is not valid
-      showDialog(
-        context: context,
-        builder: (BuildContext dialogContext) {
-          return AlertDialog(
-            title: const Text("Error"),
-            content: const Text("Please enter a valid Egyptian mobile number."),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(dialogContext).pop();
-                },
-                child: const Text("OK"),
-              ),
-            ],
-          );
-        },
+
+  @override
+  void initState() {
+    _email = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _email.dispose();
+    super.dispose();
+  }
+
+  Future passwordReset() async{
+    try{
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: _email.text.trim());
+      showDialog(context: context, builder: (context) {
+        return const AlertDialog(content: Text("Check your E_mail"),
+        );
+      },
+      
       );
-      return;
-    }
-
-    try {
-      // Simulate sending a verification code via SMS
-      // In a real app, you would use a service like Twilio to send SMS
-      print('Sending verification code to $mobile');
-
-      // Show a success message or navigate to a confirmation page
-      showDialog(
-        context: context,
-        builder: (BuildContext dialogContext) {
-          return AlertDialog(
-            title: const Text("Verification Code Sent"),
-            content: const Text(
-              "A verification code has been sent to your mobile number.",
-            ),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(dialogContext).pop();
-                },
-                child: const Text("OK"),
-              ),
-            ],
-          );
-        },
-      );
-    } catch (error) {
-      // Handle errors, show error message to user
-      showDialog(
-        context: context,
-        builder: (BuildContext dialogContext) {
-          return AlertDialog(
-            title: const Text("Error"),
-            content: Text(error.toString()),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(dialogContext).pop();
-                },
-                child: const Text("OK"),
-              ),
-            ],
-          );
-        },
+    } on FirebaseAuthException catch(e) {
+      print(e);
+      showDialog(context: context, builder: (context) {
+        return AlertDialog(content: Text(e.message.toString()),
+        );
+      },
+      
       );
     }
   }
 
-  // Function to validate and submit the login form
-  void _submitForm(BuildContext context) {
-    if (_formKey.currentState!.validate()) {
-      final mobile = _mobileController.text.trim();
-      // Call function to handle sending verification code
-      _sendVerificationCode(context, mobile);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 30,
+          fontWeight: FontWeight.bold,
+        ),
+        backgroundColor: const Color.fromARGB(255, 4, 24, 50),
+        leading: IconButton(
+          icon: const Row(
             children: [
-              TextFormField(
-                controller: _mobileController,
-                decoration: const InputDecoration(labelText: 'Mobile Number'),
-                keyboardType: TextInputType.phone,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your mobile number.';
-                  } else if (!_egyptMobileRegex.hasMatch(value)) {
-                    return 'Please enter a valid Egyptian mobile number.';
-                  }
-                  return null;
-                },
+              Icon(Icons.arrow_back, color: Colors.white),
+              SizedBox(width: 4), // Adding space between icon and text
+            ],
+          ),
+          onPressed: () {
+            Navigator.of(context).pushNamedAndRemoveUntil('/login/', (route) => false);
+          },
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          color: const Color.fromARGB(255, 4, 24, 50),
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 1),
+              const Text(
+                'Arabni',
+                style: TextStyle(
+                  color: Color.fromARGB(255, 238, 50, 53),
+                  fontSize: 52,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: () => _submitForm(context),
-                child: const Text('Send Verification Code'),
+              const Text(
+                'Enhancing Urban Mobility',
+                style: TextStyle(
+                  color: Color.fromARGB(255, 249, 248, 248),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                "Reset your password",
+                style: TextStyle(
+                  color: Color.fromARGB(255, 249, 248, 248),
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _email,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Enter your E-mail',
+                  labelStyle: TextStyle(
+                    color: Colors.black,
+                  ),
+                  hintText: 'Enter your email',
+                  hintStyle: TextStyle(
+                    color: Colors.black,
+                  ),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 25.0), // Corrected padding values
+                ),
+                style: const TextStyle(color: Colors.black),
+              ),
+              MaterialButton(onPressed: passwordReset,
+              color: const Color.fromARGB(255, 238, 50, 53),
+              child: const Text("Reset Password"),
+              ),
+              
+              
+              const SizedBox(height: 25),
+              Image.asset(
+                'assets/images/LoginPic.jpg',
+                width: 200,
+                height: 200,
               ),
             ],
           ),

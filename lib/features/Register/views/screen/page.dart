@@ -1,37 +1,41 @@
 import 'package:flutter/material.dart';
 
 
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  runApp(
-    MaterialApp(
-      title: 'New Page',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 198, 192, 208)),
-        useMaterial3: true,
-      ),
-      home: const Screen (),
-    ),
-  );
+class Screen extends StatefulWidget {
+  const Screen({Key? key}) : super(key: key);
+
+  @override
+  State<Screen> createState() => _ScreenState();
 }
 
-class Screen extends StatelessWidget {
-  const Screen({super.key});
-
+class _ScreenState extends State<Screen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
-        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 30),
-        backgroundColor: const Color(0xFF153158), // Use const for static text
+        title: const Text(
+          '',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 30,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: const Color.fromARGB(255, 4, 24, 50),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.of(context).pushNamedAndRemoveUntil('/login/', (route) => false);
+          },
+        ),
+        
       ),
-      body: Container(
-        color: const Color(0xFF153158),
-        child: const Padding(
-          padding: EdgeInsets.all(16.0),
-
+      body: SingleChildScrollView(
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          color: const Color.fromARGB(255, 4, 24, 50),
+          padding: const EdgeInsets.all(16.0),
         ),
       ),
     );
