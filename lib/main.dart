@@ -1,5 +1,3 @@
-// ignore_for_file: use_key_in_widget_constructors
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:maasapp/features/Register/views/screen/forgetPass.dart';
@@ -35,12 +33,18 @@ class MyApp extends StatelessWidget {
               ),
               useMaterial3: true,
             ),
-            home: const Login(),
+            home: BusLines(),
             routes: {
+              '/busLines/': (context) => BusLines(),
+              '/busStops/': (context) => BusStops(
+                    route: '',
+                  ),
+              /*
               '/login/': (context) => const Login(),
               '/register/': (context) => const RegisterScreen(),
               '/page/': (context) => const Screen(),
               '/forgetPass/': (context) => const ForgetPasswordScreen(),
+              */
             },
           );
         } else {
