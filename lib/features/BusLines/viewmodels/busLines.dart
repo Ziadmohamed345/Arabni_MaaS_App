@@ -17,9 +17,8 @@ class BusLines extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => BusStops(
-                            route: '',
-                          )),
+                    builder: (context) => BusStops(),
+                  ),
                 );
               },
               child: Text('Bus Routes'),

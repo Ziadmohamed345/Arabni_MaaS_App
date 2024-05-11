@@ -36,9 +36,7 @@ class MyApp extends StatelessWidget {
             home: BusLines(),
             routes: {
               '/busLines/': (context) => BusLines(),
-              '/busStops/': (context) => BusStops(
-                    route: '',
-                  ),
+              '/busStops/': (context) => BusStops(),
               /*
               '/login/': (context) => const Login(),
               '/register/': (context) => const RegisterScreen(),
