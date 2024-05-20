@@ -1,23 +1,11 @@
-<<<<<<< HEAD
-# MaaSApp
-Enhancing Urban Mobility Through a Mobility as a service and Urban Mobility app
+# Arabni: Enhancing Urban Mobility Through a Mobility as a service (MaaS) Platform
 
-Project link: https://deluxe-mandarin-cfd.notion.site/Arabni-Enhancing-Urban-Mobility-7c0144b2fe0a4dedba4d17168819b630?pvs=74
+The project aims to enhance urban mobility through a Mobility as a Service (MaaS) platform. By leveraging technology and data-driven insights, we aim to optimize transportation services, reduce congestion, and improve the overall urban mobility experience. This project seeks to transform how people navigate and access transportation options in urban areas, contributing to a more sustainable and convenient urban environment.
+
 =======
-# maasapp
 
-A new Flutter project.
+## Project Portfolio
+https://deluxe-mandarin-cfd.notion.site/Arabni-Enhancing-Urban-Mobility-7c0144b2fe0a4dedba4d17168819b630?pvs=74
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
->>>>>>> master
+#Arabni #MaaS #Platform #Urban_Mobility 
