@@ -1,9 +1,38 @@
-/// OPENROUTESERVICE DIRECTION SERVICE REQUEST 
-/// Parameters are : startPoint, endPoint and api key
+import 'package:flutter/material.dart';
 
-const String baseUrl = 'https://api.openrouteservice.org/v2/directions/driving-car';
-const String apiKey = '5b3ce3597851110001cf6248f55d7a31499e40848c6848d7de8fa624';
+class myInput extends StatefulWidget {
+  final controler;
+  final String hint;
 
-getRouteUrl(String startPoint, String endPoint){
-  return Uri.parse('$baseUrl?api_key=$apiKey&start=$startPoint&end=$endPoint');
+
+  const myInput({
+    super.key,
+    required this.controler,
+    required this.hint,
+  });
+
+  @override
+  State<myInput> createState() => _myInputState();
+}
+
+class _myInputState extends State<myInput> {
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: widget.controler,
+      decoration: InputDecoration(
+        enabledBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.white),
+        ),
+        focusedBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white)
+        ),
+        fillColor: Colors.white,
+        filled: true,
+        hintText: widget.hint,
+        hintStyle: TextStyle(color: Colors.grey[500]),
+      ),
+    );
+  }
 }
