@@ -1,17 +1,13 @@
-// ignore_for_file: deprecated_member_use, 
-
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:flutter_map/flutter_map.dart';
-//import 'package:flutter_map/src/widgets/attribution_widget.dart'; // For accessing AttributionWidget directly
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
+import 'package:geolocator/geolocator.dart';
 import 'dart:convert';
 import 'screenUI.dart';
 
-
 class MapScreen extends StatefulWidget {
-
   const MapScreen({super.key});
 
   @override
@@ -24,10 +20,124 @@ class _MapScreenState extends State<MapScreen> {
   bool isVisible = false;
   List<LatLng> routpoints = [const LatLng(52.05884, -1.345583)];
 
-    @override
+  Future<void> _setCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Location services are disabled.')),
+      );
+      return;
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Location permissions are denied.')),
+        );
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Location permissions are permanently denied.')),
+      );
+      return;
+    }
+
+    // When we reach here, permissions are granted and we can access the position.
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    if (position.latitude != 0.0 && position.longitude != 0.0) {
+      try {
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+            position.latitude, position.longitude);
+
+        if (placemarks.isNotEmpty) {
+          Placemark place = placemarks[0];
+          setState(() {
+            start.text = "${place.name}, ${place.locality}, ${place.country}";
+          });
+        }
+      } catch (e) {
+        print('Error retrieving placemarks: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to get placemark')),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to get current location')),
+      );
+    }
+  }
+
+  Future<void> _getRoute() async {
+    try {
+      List<Location> startLocation = await locationFromAddress(start.text);
+      List<Location> endLocation = await locationFromAddress(end.text);
+
+      if (startLocation.isNotEmpty && endLocation.isNotEmpty) {
+        var startLat = startLocation[0].latitude;
+        var startLng = startLocation[0].longitude;
+        var endLat = endLocation[0].latitude;
+        var endLng = endLocation[0].longitude;
+
+        print('Start coordinates: $startLat, $startLng');
+        print('End coordinates: $endLat, $endLng');
+
+        var url = Uri.parse(
+            'https://api.openrouteservice.org/v2/directions/driving-car'
+            '?api_key=5b3ce3597851110001cf624824ee2084bbf44bb2b4e345cf2d72f072'
+            '&start=$startLng,$startLat'
+            '&end=$endLng,$endLat');
+
+        var response = await http.get(url);
+
+        if (response.statusCode == 200) {
+          var data = jsonDecode(response.body);
+          var coordinates = data['features'][0]['geometry']['coordinates'];
+          setState(() {
+            routpoints = coordinates
+                .map<LatLng>((coord) => LatLng(coord[1], coord[0]))
+                .toList();
+            isVisible = true;
+          });
+        } else {
+          print('Failed to load route: ${response.reasonPhrase}');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content:
+                    Text('Failed to load route: ${response.reasonPhrase}')),
+          );
+        }
+      }
+    } catch (e) {
+      print('Exception: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to get location: $e')),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Map Screen', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),),backgroundColor: Colors.grey[500],),
+      appBar: AppBar(
+        title: const Text(
+          'Map Screen',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+        ),
+        backgroundColor: Colors.grey[500],
+      ),
       backgroundColor: Colors.grey[300],
       body: SafeArea(
         child: Padding(
@@ -35,65 +145,58 @@ class _MapScreenState extends State<MapScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                myInput(controler: start, hint: 'Enter Starting point'),
-                const SizedBox(height: 15,),
+                Row(
+                  children: [
+                    Expanded(
+                      child: myInput(
+                          controler: start, hint: 'Enter Starting point'),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.my_location),
+                      onPressed: _setCurrentLocation,
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
                 myInput(controler: end, hint: 'Enter Ending point'),
-                const SizedBox(height: 15,),
+                const SizedBox(
+                  height: 15,
+                ),
                 ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.grey[500]),
-                    onPressed: () async{
-                      List<Location> start_l = await locationFromAddress(start.text);
-                      List<Location> end_l = await locationFromAddress(end.text);
-
-                      var v1 = start_l[0].latitude;
-                      var v2 = start_l[0].longitude;
-                      var v3 = end_l[0].latitude;
-                      var v4 = end_l[0].longitude;
-
-                      
-                      var url = Uri.parse('http://router.project-osrm.org/route/v1/driving/$v2,$v1;$v4,$v3?steps=true&annotations=true&geometries=geojson&overview=full');
-                      var response = await http.get(url);
-                      print(response.body);
-                      setState(() {                                                     
-                        routpoints = [];
-                        var ruter = jsonDecode(response.body)['routes'][0]['geometry']['coordinates'];
-                        for(int i=0; i< ruter.length; i++){
-                          var reep = ruter[i].toString();
-                          reep = reep.replaceAll("[","");
-                          reep = reep.replaceAll("]","");
-                          var lat1 = reep.split(',');
-                          var long1 = reep.split(",");
-                          routpoints.add(LatLng( double.parse(lat1[1]), double.parse(long1[0])));
-                        }
-                        isVisible = !isVisible;
-                        print(routpoints);
-                      });
-                    },
-                    child: const Text('Press')),
-                const SizedBox(height: 10,),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey[500],
+                  ),
+                  onPressed: _getRoute,
+                  child: const Text('Press'),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
                 SizedBox(
                   height: 500,
                   width: 400,
                   child: Visibility(
                     visible: isVisible,
-                    child: FlutterMap(options:
-                        MapOptions(
-                          center: routpoints[0],
-                          zoom: 10,
-                        ),
-                      //nonRotatedChildren: [
-                        //AttributionWidget.defaultWidget(source: 'OpenStreetMap contributors',
-                        //onSourceTapped: null),
-                      //],
+                    child: FlutterMap(
+                      options: MapOptions(
+                        center: routpoints[0],
+                        zoom: 10,
+                      ),
                       children: [
                         TileLayer(
-                          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                          urlTemplate:
+                              'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                           userAgentPackageName: 'com.example.app',
                         ),
                         PolylineLayer(
                           polylineCulling: false,
                           polylines: [
-                            Polyline(points: routpoints, color: Colors.blue, strokeWidth: 9)
+                            Polyline(
+                                points: routpoints,
+                                color: Colors.blue,
+                                strokeWidth: 9)
                           ],
                         )
                       ],
