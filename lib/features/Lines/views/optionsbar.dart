@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:maasapp/features/BusLines/viewmodels/busStops.dart';
+import 'package:maasapp/features/Lines/BusLines/viewmodels/busRoutes.dart';
 
 class BusLines extends StatelessWidget {
   @override

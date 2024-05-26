@@ -7,8 +7,8 @@ import 'package:maasapp/features/Register/views/screen/forgetPass.dart';
 import 'package:maasapp/features/Register/views/screen/login.dart';
 import 'package:maasapp/features/Register/views/screen/page.dart';
 import 'package:maasapp/features/Register/views/screen/register.dart';
-import 'package:maasapp/features/BusLines/viewmodels/busLines.dart';
-import 'package:maasapp/features/BusLines/viewmodels/busStops.dart';
+import 'package:maasapp/features/Lines/views/optionsbar.dart';
+import 'package:maasapp/features/Lines/BusLines/viewmodels/busRoutes.dart';
 import 'package:maasapp/firebase_options.dart';
 
 void main() async {

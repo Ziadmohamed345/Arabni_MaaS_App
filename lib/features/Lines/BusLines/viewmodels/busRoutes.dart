@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:maasapp/features/BusLines/viewmodels/routeStops.dart';
+import 'package:maasapp/features/Lines/BusLines/viewmodels/busStops.dart';
 
 class BusStops extends StatelessWidget {
   final DatabaseReference _ref = FirebaseDatabase.instance.ref();
