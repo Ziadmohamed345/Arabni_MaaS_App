@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:maasapp/features/Lines/BusLines/viewmodels/busRoutes.dart';
 import 'package:maasapp/features/Lines/views/optionsbar.dart';
+import 'package:maasapp/features/Lines/BusLines/viewmodels/lines.dart'; // Import the new LinesScreen
 import 'package:maasapp/firebase_options.dart';
 
 void main() async {
@@ -25,10 +26,11 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: BusLines(),
+      home: OptionsBar(),
       routes: {
-        '/busLines/': (context) => BusLines(),
+        '/busLines/': (context) => OptionsBar(),
         '/busRoutes/': (context) => BusRoutes(),
+        '/linesScreen/': (context) => LinesScreen(), // Add this line
       },
     );
   }
