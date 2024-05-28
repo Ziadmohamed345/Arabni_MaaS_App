@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -15,8 +16,11 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
+    // Firebase database reference
   final start = TextEditingController();
   final end = TextEditingController();
+
+  
   bool isVisible = false;
   List<LatLng> routpoints = [const LatLng(52.05884, -1.345583)];
   String selectedMode = 'driving-car';
@@ -34,13 +38,12 @@ class _MapScreenState extends State<MapScreen> {
   LatLng? startMarker;
   LatLng? endMarker;
 
-   // Icons for each mode
+  // Icons for each mode
   Map<String, IconData> modeIcons = {
     'driving-car': Icons.directions_car,
     'cycling-regular': Icons.directions_bike,
     'foot-walking': Icons.directions_walk,
   };
-
 
   Future<void> _setCurrentLocation() async {
     bool serviceEnabled;
@@ -154,6 +157,7 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -162,84 +166,143 @@ class _MapScreenState extends State<MapScreen> {
           'Iternary Plan',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: Color.fromARGB(255, 75, 2, 6)),
         ),
-        backgroundColor: const Color.fromARGB(255, 203, 199, 199),
+        backgroundColor: Colors.white,
       ),
-      backgroundColor: const Color.fromARGB(255, 203, 199, 199),
+      backgroundColor: Colors.white,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            // Get screen width
+            double screenWidth = constraints.maxWidth;
+            
+            // Define layout properties based on screen size
+            bool isLargeScreen = screenWidth > 800;
+            double iconSize = isLargeScreen ? 40 : 20;
+            double padding = isLargeScreen ? 16 : 8;
+            double fontSize = isLargeScreen ? 16 : 10;
+
+            return Padding(
+              padding: EdgeInsets.all(padding),
+              child: Column(
+                children: [
+                  Column(
+  children: [
+    Container(
+      color: Color(0xFFFC486E), // Change color to FC486E
+      padding: const EdgeInsets.all(8.0), // Add some padding if needed
+      child: Column(
+        children: [
+          Row(
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: myInput(
-                        controler: start, hint: 'Enter location'),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.my_location),
-                    onPressed: _setCurrentLocation,
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              myInput(controler: end, hint: 'Enter destination'),
-              const SizedBox(
-                height: 15,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(234, 255, 255, 255),
+              SizedBox(
+                width: 280, // Set your desired width here
+                child: Container(
+                  height: 30, // Set your desired height here
+                  child: TextField(
+                    controller: start,
+                    style: TextStyle(color: Colors.white), // Set font color to white
+                    decoration: InputDecoration(
+                      hintText: 'Enter location',
+                      hintStyle: TextStyle(color: Colors.white), // Set hint color to white
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0), // Curved edges
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0), // Adjust content padding
                     ),
-                    onPressed: _getRoute,
-                    child: const Text('Directions'),
                   ),
-                  const SizedBox(width: 10),
-                  
-                ],
+                ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  for (var mode in modeNames.keys)
-                    DropdownButton<String>(
-                      value: selectedMode,
-                      items: modeNames.keys.map((String mode) {
-                        return DropdownMenuItem<String>(
-                          value: mode,
+              IconButton(
+                icon: const Icon(Icons.my_location),
+                onPressed: _setCurrentLocation,
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 5,
+          ),
+          Row(
+            children: [
+              SizedBox(
+                width: 280, // Set your desired width here
+                child: Container(
+                  height: 30, // Set your desired height here
+                  child: TextField(
+                    controller: end,
+                    style: TextStyle(color: Colors.white), // Set font color to white
+                    decoration: InputDecoration(
+                      hintText: 'Enter destination',
+                      hintStyle: TextStyle(color: Colors.white), // Set hint color to white
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0), // Curved edges
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0), // Adjust content padding
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  ],
+),
+                  /*
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(234, 255, 255, 255),
+                        ),
+                        onPressed: _getRoute,
+                        child: const Text('Directions'),
+                      ),
+                      const SizedBox(width: 10),
+                    ],
+                  ),*/
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: modeNames.keys.map((mode) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              selectedMode = mode;
+                            });
+                            _getRoute();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: selectedMode == mode
+                                ? Colors.blueAccent
+                                : Colors.blueAccent,
+                          ),
                           child: Row(
                             children: [
-                              Icon(modeIcons[mode]),
-                              SizedBox(width: 5),
-                              Text(modeNames[mode]!),
+                              Icon(modeIcons[mode], color: Colors.white, size: iconSize),
+                              const SizedBox(width: 5),
+                              Text(
+                                modeNames[mode]!,
+                                style: TextStyle(color: Colors.white, fontSize: fontSize),
+                              ),
                             ],
                           ),
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          selectedMode = newValue!;
-                        });
-                        _getRoute();
-                      },
-                    ),
-                ],
-              ),
-              const SizedBox(
-                height: 15,
-              ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
               Expanded(
                 child: Visibility(
                   visible: isVisible,
                   child: FlutterMap(
                     options: MapOptions(
                       center: routpoints[0],
-                      zoom: 10,
+                      zoom: 13,
                     ),
                       children: [
                         TileLayer(
@@ -279,7 +342,7 @@ class _MapScreenState extends State<MapScreen> {
               Visibility(
                 visible: isVisible,
                 child: Container(
-                  color: Colors.white,
+                  color: Colors.transparent,
                   padding: const EdgeInsets.all(10),
                   margin: const EdgeInsets.symmetric(vertical: 10),
                   child: Column(
@@ -292,8 +355,12 @@ class _MapScreenState extends State<MapScreen> {
               ),
             ],
           ),
-        ),
+        );
+          },
       ),
+    ),
     );
   }
 }
+
+
