@@ -75,8 +75,12 @@ class _RouteStopsState extends State<RouteStops> {
     return ListView.builder(
       itemCount: _filteredStops.length,
       itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(_filteredStops[index]),
+        return Card(
+          margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          child: ListTile(
+            title: Text(_filteredStops[index]),
+            trailing: Icon(Icons.directions_bus),
+          ),
         );
       },
     );

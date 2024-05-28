@@ -88,9 +88,13 @@ class _BusRoutesState extends State<BusRoutes> {
         final routeData = _filteredRoutes[index];
         final route = routeData['Route'];
         final stops = routeData['Stops'] as List<dynamic>;
-        return ListTile(
-          title: ElevatedButton(
-            onPressed: () {
+        return Card(
+          margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+          child: ListTile(
+            title: Text(route, style: TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Text('${stops.length} stops'),
+            trailing: Icon(Icons.arrow_forward),
+            onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -101,7 +105,6 @@ class _BusRoutesState extends State<BusRoutes> {
                 ),
               );
             },
-            child: Text(route),
           ),
         );
       },
