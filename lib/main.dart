@@ -2,7 +2,15 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:maasapp/features/Lines/BusLines/viewmodels/busRoutes.dart';
 import 'package:maasapp/features/Lines/views/optionsbar.dart';
-import 'package:maasapp/features/Lines/BusLines/viewmodels/lines.dart'; // Import the new LinesScreen
+import 'package:maasapp/features/Lines/BusLines/viewmodels/lines.dart';
+import 'package:maasapp/features/Profile/views/screen/profileScreen.dart';
+import 'package:maasapp/features/Profile/views/screen/manageAccount.dart'
+    as manageAccount;
+import 'package:maasapp/features/Profile/views/screen/feedback.dart'
+    as feedback;
+import 'package:maasapp/features/Profile/views/screen/helpCenter.dart'
+    as helpCenter;
+import 'package:maasapp/features/Register/views/screen/login.dart';
 import 'package:maasapp/firebase_options.dart';
 
 void main() async {
@@ -26,11 +34,15 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: OptionsBar(),
+      home: ProfileScreen(), // Set ProfileScreen as the home screen
       routes: {
         '/busLines/': (context) => OptionsBar(),
         '/busRoutes/': (context) => BusRoutes(),
-        '/linesScreen/': (context) => LinesScreen(), // Add this line
+        '/linesScreen/': (context) => LinesScreen(),
+        '/manageAccount/': (context) => manageAccount.ManageAccountScreen(),
+        '/feedback/': (context) => feedback.FeedbackScreen(),
+        '/helpCenter/': (context) => helpCenter.HelpCenterScreen(),
+        '/login/': (context) => Login(),
       },
     );
   }
