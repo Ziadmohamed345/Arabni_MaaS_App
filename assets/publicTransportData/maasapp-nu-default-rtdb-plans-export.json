@@ -1,0 +1,147 @@
+{
+  "plan_1": {
+    "itinerary_options": [
+      {
+        "option": 1,
+        "steps": [
+          {
+            "from": "Nile University",
+            "mode": "Walking",
+            "output": {
+              "distance": "Openrouteservice",
+              "time": "Openrouteservice"
+            },
+            "step": 1,
+            "to": "Juhayna Square"
+          },
+          {
+            "from": "Juhayna Square",
+            "mode": "Mwaslat Misr M10",
+            "output": {
+              "distance": "8.7 km",
+              "frequency": "Every 25 mins",
+              "time": "25 mins"
+            },
+            "step": 2,
+            "to": "Hosary Square"
+          },
+          {
+            "from": "Hosary Square",
+            "mode": "Suzuki van",
+            "output": {
+              "distance": "5.1 km",
+              "time": "10 mins"
+            },
+            "step": 3,
+            "to": "Family Land Mosque"
+          }
+        ]
+      },
+      {
+        "option": 2,
+        "steps": [
+          {
+            "from": "Nile University",
+            "mode": "Walking",
+            "output": {
+              "distance": "Openrouteservice",
+              "time": "Openrouteservice"
+            },
+            "step": 1,
+            "to": "Juhayna Square"
+          },
+          {
+            "from": "Juhayna Square",
+            "mode": "CTA 1043",
+            "output": {
+              "distance": "8.7 km",
+              "frequency": "Every 30 mins",
+              "time": "25 mins"
+            },
+            "step": 2,
+            "to": "tahrir Road"
+          },
+          {
+            "from": "tahrir Road",
+            "mode": "Walking",
+            "output": {
+              "distance": "Openrouteservice",
+              "time": "Openrouteservice"
+            },
+            "step": 3,
+            "to": "Family Land Mosque"
+          }
+        ]
+      }
+    ]
+  },
+  "plan_2": {
+    "itinerary_options": [
+      {
+        "option": 1,
+        "steps": [
+          {
+            "from": "Nile University",
+            "mode": "Walking",
+            "output": {
+              "distance": "Openrouteservice",
+              "time": "Openrouteservice"
+            },
+            "step": 1,
+            "to": "Juhayna Square"
+          },
+          {
+            "from": "Juhayna Square",
+            "mode": "Mwaslat Misr M10",
+            "output": {
+              "distance": "8.7 km",
+              "time": "25 mins"
+            },
+            "step": 2,
+            "to": "Hosary Square"
+          }
+        ]
+      }
+    ]
+  },
+  "plan_3": {
+    "itinerary_options": [
+      {
+        "option": 1,
+        "steps": [
+          {
+            "from": "Nile University",
+            "mode": "Walking",
+            "output": {
+              "distance": "Openrouteservice",
+              "time": "Openrouteservice"
+            },
+            "step": 1,
+            "to": "Juhayna square"
+          },
+          {
+            "from": "Juhayna Square",
+            "mode": "CTA 1043",
+            "output": {
+              "distance": "25 km",
+              "frequency": "Every 30 mins",
+              "time": "52 mins"
+            },
+            "step": 2,
+            "to": "Lebanon Square"
+          },
+          {
+            "from": "Lebanon Square",
+            "mode": "Cycling",
+            "output": {
+              "distance": "Openrouteservice",
+              "time": "Openrouteservice"
+            },
+            "step": 3,
+            "to": "Mit Okba Youth Center"
+          }
+        ]
+      }
+    ]
+  }
+}
