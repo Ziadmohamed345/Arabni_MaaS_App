@@ -6,7 +6,27 @@ import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'dart:convert';
-import 'screenUI.dart';
+
+class TripStep {
+  final String from;
+  final String to;
+  final String mode;
+  final Map<String, String> output;
+
+  TripStep({required this.from, required this.to, required this.mode, required this.output});
+
+  @override
+  String toString() {
+    return 'From: $from, To: $to, Mode: $mode, Output: $output';
+  }
+}
+
+
+
+
+
+
+
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -16,14 +36,141 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-    // Firebase database reference
+  // Firebase database reference
   final start = TextEditingController();
   final end = TextEditingController();
+  late DatabaseReference _dbRef;
+  Map<dynamic, dynamic> trips = {}; // State variable to store trips data
+  List<TripStep> tripPlan = [];
 
-  
   bool isVisible = false;
   List<LatLng> routpoints = [const LatLng(52.05884, -1.345583)];
   String selectedMode = 'driving-car';
+
+  @override
+  void initState() {
+    super.initState();
+    _dbRef = FirebaseDatabase.instance.reference().child('trips');
+    _fetchTripData();
+
+  }
+
+void _onDatabaseEvent(DatabaseEvent event) {
+  if (event.snapshot != null && event.snapshot is DataSnapshot) {
+    DataSnapshot snapshot = event.snapshot as DataSnapshot;
+    // Now you can work with the DataSnapshot
+    print('Received DataSnapshot: $snapshot');
+  } else {
+    print('Invalid DataSnapshot received');
+  }
+}
+
+void _fetchTripData() async {
+  try {
+    final DatabaseEvent event = await _dbRef.once();
+    if (event.snapshot.value != null) {
+      final data = event.snapshot.value;
+      print('Root Data Type: ${data.runtimeType}'); // Debugging line to print root data type
+      if (data is Map) {
+        setState(() {
+          trips = data as Map<dynamic, dynamic>;
+        });
+      } else if (data is List) {
+        setState(() {
+          trips = data.asMap(); // Convert list to map
+        });
+      }
+      print('Fetched Trips Data: $trips'); // Debugging line
+    } else {
+      print('No data received');
+    }
+  } catch (e) {
+    print('Error fetching data: $e');
+  }
+}
+
+
+
+List<TripStep> _findTrip(String from, String to) {
+  print('Searching for trips from: "$from" to: "$to"');
+
+  for (var trip in trips.values) {
+    print('Checking trip: $trip');
+    var itineraryOptions = trip['itinerary_options'];
+    if (itineraryOptions is List) {
+      for (var option in itineraryOptions) {
+        print('Checking option: $option');
+        var steps = option['steps'];
+        if (steps is List) {
+          List<TripStep> tripPlan = [];
+          for (var step in steps) {
+            print('Checking step: $step');
+            var tripStep = TripStep(
+              from: step['from'],
+              to: step['to'],
+              mode: step['mode'],
+              output: Map<String, String>.from(step['output']),
+            );
+            tripPlan.add(tripStep);
+            if (step['from'] == from && step['to'] == to) {
+              print('Match found for step: $step');
+              return tripPlan;
+            }
+          }
+        }
+      }
+    }
+  }
+  print('No match found');
+  return [];
+}
+
+
+
+void _searchTrip() {
+  String location = start.text.trim();
+  String destination = end.text.trim();
+
+  print('Searching for trip from: "$location" to: "$destination"');
+
+  if (location.isNotEmpty && destination.isNotEmpty) {
+    List<TripStep> tripPlan = _findTrip(location, destination);
+    setState(() {
+      this.tripPlan = tripPlan;
+    });
+    if (tripPlan.isNotEmpty) {
+      print('Trip found to the destination.');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Trip found to the destination.')),
+      );
+    } else {
+      print('No trips found to the destination.');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('No trips found to the destination.')),
+      );
+    }
+  } else {
+    print('Location or destination is empty.');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Please enter both location and destination.')),
+    );
+  }
+}
+
+
+
+
+
+  @override
+  void dispose() {
+    start.dispose();
+    end.dispose();
+    super.dispose();
+  }
+
+
+
+
   Map<String, String> modeNames = {
     'driving-car': 'Car',
     'cycling-regular': 'Bike',
@@ -37,6 +184,7 @@ class _MapScreenState extends State<MapScreen> {
   int? distance;
   LatLng? startMarker;
   LatLng? endMarker;
+  List<dynamic> _itinerarySteps = [];
 
   // Icons for each mode
   Map<String, IconData> modeIcons = {
@@ -44,6 +192,10 @@ class _MapScreenState extends State<MapScreen> {
     'cycling-regular': Icons.directions_bike,
     'foot-walking': Icons.directions_walk,
   };
+
+
+
+
 
   Future<void> _setCurrentLocation() async {
     bool serviceEnabled;
@@ -157,7 +309,6 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -186,69 +337,68 @@ class _MapScreenState extends State<MapScreen> {
               child: Column(
                 children: [
                   Column(
-  children: [
-    Container(
-      color: Color(0xFFFC486E), // Change color to FC486E
-      padding: const EdgeInsets.all(8.0), // Add some padding if needed
-      child: Column(
-        children: [
-          Row(
-            children: [
-              SizedBox(
-                width: 280, // Set your desired width here
-                child: Container(
-                  height: 30, // Set your desired height here
-                  child: TextField(
-                    controller: start,
-                    style: TextStyle(color: Colors.white), // Set font color to white
-                    decoration: InputDecoration(
-                      hintText: 'Enter location',
-                      hintStyle: TextStyle(color: Colors.white), // Set hint color to white
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0), // Curved edges
+                    children: [
+                      Container(
+                        color: const Color(0xFFFC486E), // Change color to FC486E
+                        padding: const EdgeInsets.all(8.0), // Add some padding if needed
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: 280, // Set your desired width here
+                                  child: Container(
+                                    height: 30, // Set your desired height here
+                                    child: TextField(
+                                      controller: start,
+                                      style: const TextStyle(color: Colors.white), // Set font color to white
+                                      decoration: InputDecoration(
+                                        hintText: 'Enter location',
+                                        hintStyle: const TextStyle(color: Colors.white), // Set hint color to white
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(12.0), // Curved edges
+                                        ),
+                                        contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0), // Adjust content padding
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.my_location),
+                                  onPressed: _setCurrentLocation,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: 280, // Set your desired width here
+                                  child: Container(
+                                    height: 30, // Set your desired height here
+                                    child: TextField(
+                                      controller: end,
+                                      style: const TextStyle(color: Colors.white), // Set font color to white
+                                      decoration: InputDecoration(
+                                        hintText: 'Enter destination',
+                                        hintStyle: const TextStyle(color: Colors.white), // Set hint color to white
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(12.0), // Curved edges
+                                        ),
+                                        contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0), // Adjust content padding
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0), // Adjust content padding
-                    ),
+                    ],
                   ),
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.my_location),
-                onPressed: _setCurrentLocation,
-              ),
-            ],
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          Row(
-            children: [
-              SizedBox(
-                width: 280, // Set your desired width here
-                child: Container(
-                  height: 30, // Set your desired height here
-                  child: TextField(
-                    controller: end,
-                    style: TextStyle(color: Colors.white), // Set font color to white
-                    decoration: InputDecoration(
-                      hintText: 'Enter destination',
-                      hintStyle: TextStyle(color: Colors.white), // Set hint color to white
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0), // Curved edges
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0), // Adjust content padding
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    ),
-  ],
-),
-                  /*
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -256,12 +406,12 @@ class _MapScreenState extends State<MapScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color.fromARGB(234, 255, 255, 255),
                         ),
-                        onPressed: _getRoute,
-                        child: const Text('Directions'),
+                        onPressed: _searchTrip,
+                        child: const Text('Search for trips'),
                       ),
                       const SizedBox(width: 10),
                     ],
-                  ),*/
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: modeNames.keys.map((mode) {
@@ -296,71 +446,71 @@ class _MapScreenState extends State<MapScreen> {
                   const SizedBox(
                     height: 5,
                   ),
-              Expanded(
-                child: Visibility(
-                  visible: isVisible,
-                  child: FlutterMap(
-                    options: MapOptions(
-                      center: routpoints[0],
-                      zoom: 13,
-                    ),
-                      children: [
-                        TileLayer(
-                          urlTemplate:
-                              'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                          userAgentPackageName: 'com.example.app',
+                  Expanded(
+                    child: Visibility(
+                      visible: isVisible,
+                      child: FlutterMap(
+                        options: MapOptions(
+                          center: routpoints[0],
+                          zoom: 13,
                         ),
-                        PolylineLayer(
-                          polylineCulling: false,
-                          polylines: [
-                            Polyline(
-                                points: routpoints,
-                                color: Colors.blue,
-                                strokeWidth: 9)
-                          ],
-                        ),
-                        if (startMarker != null && endMarker != null)
-                          MarkerLayer(
-                            markers: [
-                              Marker(
-                                width: 80.0,
-                                height: 80.0,
-                                point: endMarker!,
-                               child: IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.location_on),
-                          color: Colors.red,
-                          iconSize: 45,
+                        children: [
+                          TileLayer(
+                            urlTemplate:
+                                'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            userAgentPackageName: 'com.example.app',
+                          ),
+                          PolylineLayer(
+                            polylineCulling: false,
+                            polylines: [
+                              Polyline(
+                                  points: routpoints,
+                                  color: Colors.blue,
+                                  strokeWidth: 9)
+                            ],
+                          ),
+                          if (startMarker != null && endMarker != null)
+                            MarkerLayer(
+                              markers: [
+                                Marker(
+                                  width: 80.0,
+                                  height: 80.0,
+                                  point: endMarker!,
+                                  child: IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(Icons.location_on),
+                                    color: Colors.red,
+                                    iconSize: 45,
+                                  ),
                                 ),
+                              ],
                             ),
-                          ],
-                        ),
-                    ],
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              Visibility(
-                visible: isVisible,
-                child: Container(
-                  color: Colors.transparent,
-                  padding: const EdgeInsets.all(10),
-                  margin: const EdgeInsets.symmetric(vertical: 10),
-                  child: Column(
-                    children: [
-                      Text('Estimated time ${modeNames[selectedMode]}: ${travelTimes[selectedMode]!.toStringAsFixed(2)} minutes'),
-                      Text('Distance: ${distance?.toStringAsFixed(2)} km'),
-                    ],
+                  Container(
+            color: Colors.white,
+            child: tripPlan.isEmpty
+                ? Center(child: Text('No trip plan found.'))
+                : ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: tripPlan.length,
+                    itemBuilder: (context, index) {
+                      final step = tripPlan[index];
+                      return ListTile(
+                        title: Text('${step.from} to ${step.to}'),
+                        subtitle: Text('Mode: ${step.mode}, Output: ${step.output}'),
+                      );
+                    },
                   ),
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        );
+            );
           },
+        ),
       ),
-    ),
     );
   }
 }
-
-
