@@ -255,110 +255,129 @@ void _searchTrip() {
     }
   }
 
-  Future<void> _getRoute() async {
-    try {
-      List<Location> startLocation = await locationFromAddress(start.text);
-      List<Location> endLocation = await locationFromAddress(end.text);
+Future<void> _getRoute() async {
+  try {
+    List<Location> startLocation = await locationFromAddress(start.text);
+    List<Location> endLocation = await locationFromAddress(end.text);
 
-      if (startLocation.isNotEmpty && endLocation.isNotEmpty) {
-        var startLat = startLocation[0].latitude;
-        var startLng = startLocation[0].longitude;
-        var endLat = endLocation[0].latitude;
-        var endLng = endLocation[0].longitude;
+    if (startLocation.isNotEmpty && endLocation.isNotEmpty) {
+      var startLat = startLocation[0].latitude;
+      var startLng = startLocation[0].longitude;
+      var endLat = endLocation[0].latitude;
+      var endLng = endLocation[0].longitude;
 
-        print('Start coordinates: $startLat, $startLng');
-        print('End coordinates: $endLat, $endLng');
+      print('Start coordinates: $startLat, $startLng');
+      print('End coordinates: $endLat, $endLng');
 
-        var url = Uri.parse(
-            'https://api.openrouteservice.org/v2/directions/$selectedMode'
-            '?api_key=5b3ce3597851110001cf624824ee2084bbf44bb2b4e345cf2d72f072'
-            '&start=$startLng,$startLat'
-            '&end=$endLng,$endLat');
+      var url = Uri.parse(
+          'https://api.openrouteservice.org/v2/directions/$selectedMode'
+          '?api_key=5b3ce3597851110001cf624824ee2084bbf44bb2b4e345cf2d72f072'
+          '&start=$startLng,$startLat'
+          '&end=$endLng,$endLat');
 
-        var response = await http.get(url);
+      var response = await http.get(url);
 
-        if (response.statusCode == 200) {
-          var data = jsonDecode(response.body);
-          var coordinates = data['features'][0]['geometry']['coordinates'];
-          var duration = data['features'][0]['properties']['segments'][0]['duration'];
-          var dist = data['features'][0]['properties']['segments'][0]['distance'];
-          setState(() {
-            routpoints = coordinates
-                .map<LatLng>((coord) => LatLng(coord[1], coord[0]))
-                .toList();
-            travelTimes[selectedMode] = (duration / 60).round(); // convert seconds to minutes and round
-            distance = (dist / 1000).round(); // convert meters to kilometers and round
-            isVisible = true;
-            startMarker = LatLng(startLat, startLng);
-            endMarker = LatLng(endLat, endLng);
-          });
-        } else {
-          print('Failed to load route: ${response.reasonPhrase}');
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content:
-                    Text('Failed to load route: ${response.reasonPhrase}')),
-          );
-        }
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        var coordinates = data['features'][0]['geometry']['coordinates'];
+        var duration = data['features'][0]['properties']['segments'][0]['duration'];
+        var dist = data['features'][0]['properties']['segments'][0]['distance'];
+        
+        setState(() {
+          routpoints = coordinates
+              .map<LatLng>((coord) => LatLng(coord[1], coord[0]))
+              .toList();
+          travelTimes[selectedMode] = (duration / 60).round(); // convert seconds to minutes and round
+          distance = (dist / 1000).round(); // convert meters to kilometers and round
+          isVisible = true;
+          startMarker = LatLng(startLat, startLng);
+          endMarker = LatLng(endLat, endLng);
+
+          // Update the trip plan
+          tripPlan = [
+            TripStep(
+              from: start.text,
+              to: end.text,
+              mode: selectedMode,
+              output: {
+                'distance': '${(dist / 1000).toStringAsFixed(2)} km',
+                'time': '${(duration / 60).toStringAsFixed(2)} min',
+              },
+            ),
+          ];
+        });
+
+        // Update Firebase with the new itinerary options
+        await _dbRef.child('itinerary_options/$selectedMode').set({
+          'duration': duration,
+          'distance': dist,
+          'coordinates': coordinates.map((coord) => [coord[1], coord[0]]).toList(),
+        });
+      } else {
+        print('Failed to load route: ${response.reasonPhrase}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load route: ${response.reasonPhrase}')),
+        );
       }
-    } catch (e) {
-      print('Exception: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to get location: $e')),
-      );
     }
+  } catch (e) {
+    print('Exception: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Failed to get location: $e')),
+    );
   }
+}
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Iternary Plan',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: Color.fromARGB(255, 75, 2, 6)),
-        ),
-        backgroundColor: Colors.white,
+
+
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: const Text(
+        'Itinerary Plan',
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: Color.fromARGB(255, 75, 2, 6)),
       ),
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            // Get screen width
-            double screenWidth = constraints.maxWidth;
-            
-            // Define layout properties based on screen size
-            bool isLargeScreen = screenWidth > 800;
-            double iconSize = isLargeScreen ? 40 : 20;
-            double padding = isLargeScreen ? 16 : 8;
-            double fontSize = isLargeScreen ? 16 : 10;
+    ),
+    backgroundColor: Colors.white,
+    body: SafeArea(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          double screenWidth = constraints.maxWidth;
+          bool isLargeScreen = screenWidth > 800;
+          double iconSize = isLargeScreen ? 40 : 20;
+          double padding = isLargeScreen ? 16 : 8;
+          double fontSize = isLargeScreen ? 16 : 10;
 
-            return Padding(
+          return SingleChildScrollView(
+            child: Padding(
               padding: EdgeInsets.all(padding),
               child: Column(
                 children: [
                   Column(
                     children: [
                       Container(
-                        color: const Color(0xFFFC486E), // Change color to FC486E
-                        padding: const EdgeInsets.all(8.0), // Add some padding if needed
+                        color: const Color(0xFFFC486E),
+                        padding: const EdgeInsets.all(8.0),
                         child: Column(
                           children: [
                             Row(
                               children: [
                                 SizedBox(
-                                  width: 280, // Set your desired width here
+                                  width: 280,
                                   child: Container(
-                                    height: 30, // Set your desired height here
+                                    height: 30,
                                     child: TextField(
                                       controller: start,
-                                      style: const TextStyle(color: Colors.white), // Set font color to white
+                                      style: const TextStyle(color: Colors.white),
                                       decoration: InputDecoration(
                                         hintText: 'Enter location',
-                                        hintStyle: const TextStyle(color: Colors.white), // Set hint color to white
+                                        hintStyle: const TextStyle(color: Colors.white),
                                         border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(12.0), // Curved edges
+                                          borderRadius: BorderRadius.circular(12.0),
                                         ),
-                                        contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0), // Adjust content padding
+                                        contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                                       ),
                                     ),
                                   ),
@@ -369,25 +388,23 @@ void _searchTrip() {
                                 ),
                               ],
                             ),
-                            const SizedBox(
-                              height: 5,
-                            ),
+                            const SizedBox(height: 5),
                             Row(
                               children: [
                                 SizedBox(
-                                  width: 280, // Set your desired width here
+                                  width: 280,
                                   child: Container(
-                                    height: 30, // Set your desired height here
+                                    height: 30,
                                     child: TextField(
                                       controller: end,
-                                      style: const TextStyle(color: Colors.white), // Set font color to white
+                                      style: const TextStyle(color: Colors.white),
                                       decoration: InputDecoration(
                                         hintText: 'Enter destination',
-                                        hintStyle: const TextStyle(color: Colors.white), // Set hint color to white
+                                        hintStyle: const TextStyle(color: Colors.white),
                                         border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(12.0), // Curved edges
+                                          borderRadius: BorderRadius.circular(12.0),
                                         ),
-                                        contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0), // Adjust content padding
+                                        contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                                       ),
                                     ),
                                   ),
@@ -425,9 +442,7 @@ void _searchTrip() {
                             _getRoute();
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: selectedMode == mode
-                                ? Colors.blueAccent
-                                : Colors.blueAccent,
+                            backgroundColor: selectedMode == mode ? Colors.blueAccent : Colors.blueAccent,
                           ),
                           child: Row(
                             children: [
@@ -443,30 +458,25 @@ void _searchTrip() {
                       );
                     }).toList(),
                   ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Expanded(
+                  const SizedBox(height: 5),
+                  Container(
+                    height: isVisible ? 200 : 300,
                     child: Visibility(
                       visible: isVisible,
                       child: FlutterMap(
                         options: MapOptions(
-                          center: routpoints[0],
+                          center: routpoints.isNotEmpty ? routpoints[0] : LatLng(0, 0),
                           zoom: 13,
                         ),
                         children: [
                           TileLayer(
-                            urlTemplate:
-                                'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                             userAgentPackageName: 'com.example.app',
                           ),
                           PolylineLayer(
                             polylineCulling: false,
                             polylines: [
-                              Polyline(
-                                  points: routpoints,
-                                  color: Colors.blue,
-                                  strokeWidth: 9)
+                              Polyline(points: routpoints, color: Colors.blue, strokeWidth: 9),
                             ],
                           ),
                           if (startMarker != null && endMarker != null)
@@ -489,28 +499,48 @@ void _searchTrip() {
                       ),
                     ),
                   ),
+                  if (isVisible)
+                    Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 5),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                '${modeNames[selectedMode]}: ${travelTimes[selectedMode]} min, $distance km',
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   Container(
-            color: Colors.white,
-            child: tripPlan.isEmpty
-                ? Center(child: Text('No trip plan found.'))
-                : ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: tripPlan.length,
-                    itemBuilder: (context, index) {
-                      final step = tripPlan[index];
-                      return ListTile(
-                        title: Text('${step.from} to ${step.to}'),
-                        subtitle: Text('Mode: ${step.mode}, Output: ${step.output}'),
-                      );
-                    },
-                  ),
-                  ),
-                ],
-              ),
+  color: Colors.white,
+  child: tripPlan.isEmpty
+      ? Center(child: Text('No trip plan found.'))
+      : ListView.builder(
+          shrinkWrap: true,
+          itemCount: tripPlan.length,
+          itemBuilder: (context, index) {
+            final step = tripPlan[index];
+            return ListTile(
+              title: Text('${step.from} to ${step.to}'),
+              subtitle: Text('Mode: ${modeNames[step.mode]}, Distance: ${step.output['distance']}, Time: ${step.output['time']}'),
             );
           },
         ),
+),
+                ],
+              ),
+            ),
+          );
+        },
       ),
-    );
-  }
+    ),
+  );
+}
+
+
 }
